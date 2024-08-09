@@ -57,7 +57,7 @@ app.get("/", (req, res) => {
 
 // *******Primer tiro
 // Calcular interes de creditos vencidos de amortizacion
-cron.schedule("* * * * *", async () => {
+cron.schedule("6 * * * *", async () => {
   console.log("Iniciando credito de amortizacion");
 
   const fakeReq = {} as express.Request; // Puedes personalizar esto según tus necesidades
@@ -71,7 +71,7 @@ cron.schedule("* * * * *", async () => {
 });
 
 // Calcular sanciones
-cron.schedule("* * * * *", async () => {
+cron.schedule("10 * * * *", async () => {
   console.log("Iniciando tarea de cálculo de sanciones...");
 
   const fakeReq = {} as express.Request; // Puedes personalizar esto según tus necesidades
@@ -85,7 +85,7 @@ cron.schedule("* * * * *", async () => {
 });
 
 // Nuevo saldo de bolsa
-cron.schedule("* * * * *", async () => {
+cron.schedule("11 * * * *", async () => {
   console.log("Iniciando bolsas.");
 
   const fakeReq = {} as express.Request; // Puedes personalizar esto según tus necesidades
@@ -99,7 +99,7 @@ cron.schedule("* * * * *", async () => {
 });
 
 // // Enviar MSM
-cron.schedule("* * * * *", async () => {
+cron.schedule("2 1 * * *", async () => {
   console.log("Iniciando MSM.");
 
   const fakeReq = {} as express.Request; // Puedes personalizar esto según tus necesidades
@@ -113,7 +113,7 @@ cron.schedule("* * * * *", async () => {
 });
 
 // // Nuevo saldo de proveedor
-cron.schedule("* * * * *", async () => {
+cron.schedule("12 * * * *", async () => {
   console.log("Iniciando saldo proveedor.");
 
   const fakeReq = {} as express.Request;
@@ -127,7 +127,7 @@ cron.schedule("* * * * *", async () => {
 });
 
 // // Nuevo saldo de listado de cobro
-cron.schedule("* * * * 1,4", async () => {
+cron.schedule("8 * * * 1,4", async () => {
   console.log("Iniciando lista de cobranza");
 
   const fakeReq = {} as express.Request;
@@ -275,7 +275,7 @@ cron.schedule("30,35 11 * * 1,4,6", async () => {
       }),
     } as express.Response;
 
-    await TareasProgramadasMoraPrimera(fakeReq, fakeRes);
+    await TareasProgramadasMoraSegundo(fakeReq, fakeRes);
 
     console.log("Tarea de bolsas completada.");
   } else {
@@ -312,7 +312,7 @@ cron.schedule("30,36 13 * * 1,4,6", async () => {
       }),
     } as express.Response;
 
-    await TareasProgramadasMoraPrimera(fakeReq, fakeRes);
+    await TareasProgramadasMoraTercero(fakeReq, fakeRes);
 
     console.log("Tarea de bolsas completada.");
   } else {
@@ -349,7 +349,7 @@ cron.schedule("30,41 13 * * 1", async () => {
       }),
     } as express.Response;
 
-    await TareasProgramadasMoraPrimera(fakeReq, fakeRes);
+    await TareasProgramadasMoraCuatro(fakeReq, fakeRes);
 
     console.log("Tarea de bolsas completada.");
   } else {
