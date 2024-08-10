@@ -20,9 +20,10 @@ export const CalcularSanciones = async (
 ): Promise<void> => {
   const tareas = "calcular sanciones";
   const tareaInsertada = await validarEInsertarTarea(tareas);
+  const { fecha, hora } = obtenerFechaHoraBogota();
 
   if (!tareaInsertada) {
-    console.log("ya existe un registro en:", tareas);
+    console.log("ya existe un registro en:", tareas, fecha, hora);
     return; // Detener la ejecución si la tarea ya existe
   }
 
@@ -141,9 +142,10 @@ export const CreditoAmortizador = async (
 ): Promise<void> => {
   const tareas = "credito amortizador";
   const tareaInsertada = await validarEInsertarTarea(tareas);
+  const { fecha, hora } = obtenerFechaHoraBogota();
 
   if (!tareaInsertada) {
-    console.log("ya existe un registro en:", tareas);
+    console.log("ya existe un registro en:", tareas, fecha, hora);
     return; // Detener la ejecución si la tarea ya existe
   }
 
@@ -292,9 +294,10 @@ export const NuevoSaldoAnteriorBolsa = async (
 
   const tareas = "nuevo saldo anterior";
   const tareaInsertada = await validarEInsertarTarea(tareas);
+  const { hora } = obtenerFechaHoraBogota();
 
   if (!tareaInsertada) {
-    console.log("ya existe un registro en:", tareas);
+    console.log("ya existe un registro en:", tareas, fecha, hora);
     return; // Detener la ejecución si la tarea ya existe
   }
 
@@ -488,15 +491,16 @@ export const NuevoSaldoAnteriorproveedores = async (
   req: Request,
   res: Response
 ): Promise<void> => {
+  const fecha = new Date().toISOString().split("T")[0]; // Obtiene la fecha actual en formato YYYY-MM-DD
+
   const tareas = "nuevo saldo bolsa proveedor";
   const tareaInsertada = await validarEInsertarTarea(tareas);
+  const { hora } = obtenerFechaHoraBogota();
 
   if (!tareaInsertada) {
-    console.log("ya existe un registro en:", tareas);
+    console.log("ya existe un registro en:", tareas, fecha, hora);
     return; // Detener la ejecución si la tarea ya existe
   }
-
-  const fecha = new Date().toISOString().split("T")[0]; // Obtiene la fecha actual en formato YYYY-MM-DD
 
   const fechaAyer = new Date();
   fechaAyer.setDate(fechaAyer.getDate() - 1);
@@ -663,9 +667,10 @@ export const NotificarMensaje = async (
 ): Promise<void> => {
   const tareas = "tarea msm";
   const tareaInsertada = await validarEInsertarTarea(tareas);
+  const { fecha, hora } = obtenerFechaHoraBogota();
 
   if (!tareaInsertada) {
-    console.log("ya existe un registro en:", tareas);
+    console.log("ya existe un registro en:", tareas, fecha, hora);
     return; // Detener la ejecución si la tarea ya existe
   }
 
@@ -696,9 +701,10 @@ export const ListaCobranza = async (
 ): Promise<void> => {
   const tareas = "lista cobranza L J";
   const tareaInsertada = await validarEInsertarTarea(tareas);
+  const { fecha, hora } = obtenerFechaHoraBogota();
 
   if (!tareaInsertada) {
-    console.log("ya existe un registro en:", tareas);
+    console.log("ya existe un registro en:", tareas, fecha, hora);
     return; // Detener la ejecución si la tarea ya existe
   }
   try {
@@ -873,9 +879,10 @@ export const TareasProgramadasServidor = async (
 ): Promise<void> => {
   const tareas = "tarea programada servidor";
   const tareaInsertada = await validarEInsertarTarea(tareas);
+  const { fecha, hora } = obtenerFechaHoraBogota();
 
   if (!tareaInsertada) {
-    console.log("ya existe un registro en:", tareas);
+    console.log("ya existe un registro en:", tareas, fecha, hora);
     return; // Detener la ejecución si la tarea ya existe
   }
 
@@ -951,9 +958,10 @@ export const TareasProgramadasSinMora = async (
 ): Promise<void> => {
   const tareas = "tarea programada sin mora";
   const tareaInsertada = await validarEInsertarTarea(tareas);
+  const { fecha, hora } = obtenerFechaHoraBogota();
 
   if (!tareaInsertada) {
-    console.log("ya existe un registro en:", tareas);
+    console.log("ya existe un registro en:", tareas, fecha, hora);
     return; // Detener la ejecución si la tarea ya existe
   }
 
@@ -975,9 +983,10 @@ export const TareasProgramadasMoraPrimera = async (
 ): Promise<void> => {
   const tareas = "tarea programada mora primera 30";
   const tareaInsertada = await validarEInsertarTarea(tareas);
+  const { fecha, hora } = obtenerFechaHoraBogota();
 
   if (!tareaInsertada) {
-    console.log("ya existe un registro en:", tareas);
+    console.log("ya existe un registro en:", tareas, fecha, hora);
     return; // Detener la ejecución si la tarea ya existe
   }
 
@@ -999,9 +1008,10 @@ export const TareasProgramadasMoraSegundo = async (
 ): Promise<void> => {
   const tareas = "tarea programada mora segunda 60";
   const tareaInsertada = await validarEInsertarTarea(tareas);
+  const { fecha, hora } = obtenerFechaHoraBogota();
 
   if (!tareaInsertada) {
-    console.log("ya existe un registro en:", tareas);
+    console.log("ya existe un registro en:", tareas, fecha, hora);
     return; // Detener la ejecución si la tarea ya existe
   }
 
@@ -1023,9 +1033,10 @@ export const TareasProgramadasMoraTercero = async (
 ): Promise<void> => {
   const tareas = "tarea programada mora tercero 90";
   const tareaInsertada = await validarEInsertarTarea(tareas);
+  const { fecha, hora } = obtenerFechaHoraBogota();
 
   if (!tareaInsertada) {
-    console.log("ya existe un registro en:", tareas);
+    console.log("ya existe un registro en:", tareas, fecha, hora);
     return; // Detener la ejecución si la tarea ya existe
   }
   try {
@@ -1046,9 +1057,10 @@ export const TareasProgramadasMoraCuatro = async (
 ): Promise<void> => {
   const tareas = "tarea programada mora cuarto 150";
   const tareaInsertada = await validarEInsertarTarea(tareas);
+  const { fecha, hora } = obtenerFechaHoraBogota();
 
   if (!tareaInsertada) {
-    console.log("ya existe un registro en:", tareas);
+    console.log("ya existe un registro en:", tareas, fecha, hora);
     return; // Detener la ejecución si la tarea ya existe
   }
   try {
