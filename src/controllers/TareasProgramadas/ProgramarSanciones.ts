@@ -5,6 +5,7 @@ import { pool } from "../../db";
 import { RowDataPacket } from "mysql2";
 import axios from "axios";
 import { NOTIFICATION_API, API_SERVER, ADIN_API } from "../../config";
+import moment from "moment-timezone";
 
 const apiURL_notificar = NOTIFICATION_API;
 
@@ -21,16 +22,7 @@ export const CalcularSanciones = async (
   const tareaInsertada = await validarEInsertarTarea(tareas);
 
   if (!tareaInsertada) {
-    // Obtener la hora y los minutos actuales
-    const now = new Date();
-
-    // Formatear la hora y los minutos
-    const hours = now.getHours().toString().padStart(2, "0");
-    const minutes = now.getMinutes().toString().padStart(2, "0");
-
-    const formattedTime = `${hours}:${minutes}`;
-
-    console.log(`Ya existe un registro en: ${tareas} a las ${formattedTime}`);
+    console.log("ya existe un registro en:", tareas);
     return; // Detener la ejecución si la tarea ya existe
   }
 
@@ -151,16 +143,7 @@ export const CreditoAmortizador = async (
   const tareaInsertada = await validarEInsertarTarea(tareas);
 
   if (!tareaInsertada) {
-    // Obtener la hora y los minutos actuales
-    const now = new Date();
-
-    // Formatear la hora y los minutos
-    const hours = now.getHours().toString().padStart(2, "0");
-    const minutes = now.getMinutes().toString().padStart(2, "0");
-
-    const formattedTime = `${hours}:${minutes}`;
-
-    console.log(`Ya existe un registro en: ${tareas} a las ${formattedTime}`);
+    console.log("ya existe un registro en:", tareas);
     return; // Detener la ejecución si la tarea ya existe
   }
 
@@ -311,16 +294,7 @@ export const NuevoSaldoAnteriorBolsa = async (
   const tareaInsertada = await validarEInsertarTarea(tareas);
 
   if (!tareaInsertada) {
-    // Obtener la hora y los minutos actuales
-    const now = new Date();
-
-    // Formatear la hora y los minutos
-    const hours = now.getHours().toString().padStart(2, "0");
-    const minutes = now.getMinutes().toString().padStart(2, "0");
-
-    const formattedTime = `${hours}:${minutes}`;
-
-    console.log(`Ya existe un registro en: ${tareas} a las ${formattedTime}`);
+    console.log("ya existe un registro en:", tareas);
     return; // Detener la ejecución si la tarea ya existe
   }
 
@@ -518,16 +492,7 @@ export const NuevoSaldoAnteriorproveedores = async (
   const tareaInsertada = await validarEInsertarTarea(tareas);
 
   if (!tareaInsertada) {
-    // Obtener la hora y los minutos actuales
-    const now = new Date();
-
-    // Formatear la hora y los minutos
-    const hours = now.getHours().toString().padStart(2, "0");
-    const minutes = now.getMinutes().toString().padStart(2, "0");
-
-    const formattedTime = `${hours}:${minutes}`;
-
-    console.log(`Ya existe un registro en: ${tareas} a las ${formattedTime}`);
+    console.log("ya existe un registro en:", tareas);
     return; // Detener la ejecución si la tarea ya existe
   }
 
@@ -700,16 +665,7 @@ export const NotificarMensaje = async (
   const tareaInsertada = await validarEInsertarTarea(tareas);
 
   if (!tareaInsertada) {
-    // Obtener la hora y los minutos actuales
-    const now = new Date();
-
-    // Formatear la hora y los minutos
-    const hours = now.getHours().toString().padStart(2, "0");
-    const minutes = now.getMinutes().toString().padStart(2, "0");
-
-    const formattedTime = `${hours}:${minutes}`;
-
-    console.log(`Ya existe un registro en: ${tareas} a las ${formattedTime}`);
+    console.log("ya existe un registro en:", tareas);
     return; // Detener la ejecución si la tarea ya existe
   }
 
@@ -742,19 +698,9 @@ export const ListaCobranza = async (
   const tareaInsertada = await validarEInsertarTarea(tareas);
 
   if (!tareaInsertada) {
-    // Obtener la hora y los minutos actuales
-    const now = new Date();
-
-    // Formatear la hora y los minutos
-    const hours = now.getHours().toString().padStart(2, "0");
-    const minutes = now.getMinutes().toString().padStart(2, "0");
-
-    const formattedTime = `${hours}:${minutes}`;
-
-    console.log(`Ya existe un registro en: ${tareas} a las ${formattedTime}`);
+    console.log("ya existe un registro en:", tareas);
     return; // Detener la ejecución si la tarea ya existe
   }
-
   try {
     // Consulta SQL para eliminar todos los registros de la tabla 'gestion_cartera'
     const deleteQuery = "DELETE FROM gestion_cartera";
@@ -902,18 +848,10 @@ export const listadoCobranzaActualizar = async (
 ): Promise<void> => {
   const tareas = "lista cobranza actualizada";
   const tareaInsertada = await validarEInsertarTarea(tareas);
+  const { fecha, hora } = obtenerFechaHoraBogota();
 
   if (!tareaInsertada) {
-    // Obtener la hora y los minutos actuales
-    const now = new Date();
-
-    // Formatear la hora y los minutos
-    const hours = now.getHours().toString().padStart(2, "0");
-    const minutes = now.getMinutes().toString().padStart(2, "0");
-
-    const formattedTime = `${hours}:${minutes}`;
-
-    console.log(`Ya existe un registro en: ${tareas} a las ${formattedTime}`);
+    console.log("ya existe un registro en:", tareas, fecha, hora);
     return; // Detener la ejecución si la tarea ya existe
   }
 
@@ -937,16 +875,7 @@ export const TareasProgramadasServidor = async (
   const tareaInsertada = await validarEInsertarTarea(tareas);
 
   if (!tareaInsertada) {
-    // Obtener la hora y los minutos actuales
-    const now = new Date();
-
-    // Formatear la hora y los minutos
-    const hours = now.getHours().toString().padStart(2, "0");
-    const minutes = now.getMinutes().toString().padStart(2, "0");
-
-    const formattedTime = `${hours}:${minutes}`;
-
-    console.log(`Ya existe un registro en: ${tareas} a las ${formattedTime}`);
+    console.log("ya existe un registro en:", tareas);
     return; // Detener la ejecución si la tarea ya existe
   }
 
@@ -1024,16 +953,7 @@ export const TareasProgramadasSinMora = async (
   const tareaInsertada = await validarEInsertarTarea(tareas);
 
   if (!tareaInsertada) {
-    // Obtener la hora y los minutos actuales
-    const now = new Date();
-
-    // Formatear la hora y los minutos
-    const hours = now.getHours().toString().padStart(2, "0");
-    const minutes = now.getMinutes().toString().padStart(2, "0");
-
-    const formattedTime = `${hours}:${minutes}`;
-
-    console.log(`Ya existe un registro en: ${tareas} a las ${formattedTime}`);
+    console.log("ya existe un registro en:", tareas);
     return; // Detener la ejecución si la tarea ya existe
   }
 
@@ -1057,16 +977,7 @@ export const TareasProgramadasMoraPrimera = async (
   const tareaInsertada = await validarEInsertarTarea(tareas);
 
   if (!tareaInsertada) {
-    // Obtener la hora y los minutos actuales
-    const now = new Date();
-
-    // Formatear la hora y los minutos
-    const hours = now.getHours().toString().padStart(2, "0");
-    const minutes = now.getMinutes().toString().padStart(2, "0");
-
-    const formattedTime = `${hours}:${minutes}`;
-
-    console.log(`Ya existe un registro en: ${tareas} a las ${formattedTime}`);
+    console.log("ya existe un registro en:", tareas);
     return; // Detener la ejecución si la tarea ya existe
   }
 
@@ -1090,16 +1001,7 @@ export const TareasProgramadasMoraSegundo = async (
   const tareaInsertada = await validarEInsertarTarea(tareas);
 
   if (!tareaInsertada) {
-    // Obtener la hora y los minutos actuales
-    const now = new Date();
-
-    // Formatear la hora y los minutos
-    const hours = now.getHours().toString().padStart(2, "0");
-    const minutes = now.getMinutes().toString().padStart(2, "0");
-
-    const formattedTime = `${hours}:${minutes}`;
-
-    console.log(`Ya existe un registro en: ${tareas} a las ${formattedTime}`);
+    console.log("ya existe un registro en:", tareas);
     return; // Detener la ejecución si la tarea ya existe
   }
 
@@ -1123,19 +1025,9 @@ export const TareasProgramadasMoraTercero = async (
   const tareaInsertada = await validarEInsertarTarea(tareas);
 
   if (!tareaInsertada) {
-    // Obtener la hora y los minutos actuales
-    const now = new Date();
-
-    // Formatear la hora y los minutos
-    const hours = now.getHours().toString().padStart(2, "0");
-    const minutes = now.getMinutes().toString().padStart(2, "0");
-
-    const formattedTime = `${hours}:${minutes}`;
-
-    console.log(`Ya existe un registro en: ${tareas} a las ${formattedTime}`);
+    console.log("ya existe un registro en:", tareas);
     return; // Detener la ejecución si la tarea ya existe
   }
-
   try {
     // Hacer la solicitud HTTP para Recalcular Créditos Vencidos
     const recordarSinMora = await axios.post(
@@ -1156,19 +1048,9 @@ export const TareasProgramadasMoraCuatro = async (
   const tareaInsertada = await validarEInsertarTarea(tareas);
 
   if (!tareaInsertada) {
-    // Obtener la hora y los minutos actuales
-    const now = new Date();
-
-    // Formatear la hora y los minutos
-    const hours = now.getHours().toString().padStart(2, "0");
-    const minutes = now.getMinutes().toString().padStart(2, "0");
-
-    const formattedTime = `${hours}:${minutes}`;
-
-    console.log(`Ya existe un registro en: ${tareas} a las ${formattedTime}`);
+    console.log("ya existe un registro en:", tareas);
     return; // Detener la ejecución si la tarea ya existe
   }
-
   try {
     // Hacer la solicitud HTTP para Recalcular Créditos Vencidos
     const recordarSinMora = await axios.post(
@@ -1181,33 +1063,47 @@ export const TareasProgramadasMoraCuatro = async (
   }
 };
 
+//  dia y hora bogota colombia
+const obtenerFechaHoraBogota = (): { fecha: string; hora: string } => {
+  // Obtener la fecha y hora actual en la zona horaria de Bogotá
+  const fechaHoraBogota = moment().tz("America/Bogota");
+
+  // Formatear la fecha y la hora
+  const fecha = fechaHoraBogota.format("YYYY-MM-DD"); // Fecha en formato YYYY-MM-DD
+  const hora = fechaHoraBogota.format("HH:mm"); // Hora en formato HH:mm
+
+  return { fecha, hora };
+};
+
 const validarEInsertarTarea = async (tarea: string): Promise<boolean> => {
   try {
-    const fecha_hoy = new Date().toISOString().split("T")[0]; // Obtiene la fecha actual en formato YYYY-MM-DD
+    // Obtener la fecha ajustada a la zona horaria de Bogotá
+    const { fecha, hora } = obtenerFechaHoraBogota();
 
+    console.log("fecha", fecha);
     const tareasPogramadasValidar = `
-      SELECT 
-        CASE 
-          WHEN COUNT(*) > 0 THEN 1 
-          ELSE 2 
-        END AS result
-      FROM tareasprogramadas
-      WHERE tarea = ? AND DATE(fecha_registro) = ?;
+     SELECT 
+       CASE 
+         WHEN COUNT(*) > 0 THEN 1 
+         ELSE 2 
+       END AS result
+     FROM tareasprogramadas
+     WHERE tarea = ? AND DATE(fecha_registro) = DATE(?);
+
     `;
 
     // Ejecutar la consulta de validación
-    const [rows] = await pool.query(tareasPogramadasValidar, [
-      tarea,
-      fecha_hoy,
-    ]);
+    const [rows] = await pool.query(tareasPogramadasValidar, [tarea, fecha]);
     const result = rows[0].result;
 
     console.log("tareas", result);
 
     if (result === 1) {
-      console.log("Ya existe un registro");
+      // console.log("Ya existe un registro", hora);
       return false; // Indicar que la tarea ya existe
     }
+
+    console.log("proceso de", tarea, " hora:", hora);
 
     // Si no existe un registro, proceder con la inserción
     const insertSaldoAnteriorQuery = `
