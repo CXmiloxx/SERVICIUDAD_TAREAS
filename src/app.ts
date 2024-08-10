@@ -335,6 +335,7 @@ cron.schedule("30,36 13 * * 1,4,6", async () => {
 // });
 
 // Tareas directas a las URL  recordar 150 dias en mora
+
 cron.schedule("30,41 13 * * 1", async () => {
   const hoy = new Date();
 
