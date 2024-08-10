@@ -141,7 +141,7 @@ cron.schedule("8 * * * 1,4", async () => {
 });
 
 // Nuevo saldo de listado de cobro  actualizar
-cron.schedule("* * * * *", async () => {
+cron.schedule("22 * * * *", async () => {
   console.log("Iniciando lista de cobranza  actualizar");
 
   const fakeReq = {} as express.Request;
