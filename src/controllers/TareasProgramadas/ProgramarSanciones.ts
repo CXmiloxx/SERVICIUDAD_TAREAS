@@ -21,7 +21,16 @@ export const CalcularSanciones = async (
   const tareaInsertada = await validarEInsertarTarea(tareas);
 
   if (!tareaInsertada) {
-    console.log("ya existe un registro en:", tareas);
+    // Obtener la hora y los minutos actuales
+    const now = new Date();
+
+    // Formatear la hora y los minutos
+    const hours = now.getHours().toString().padStart(2, "0");
+    const minutes = now.getMinutes().toString().padStart(2, "0");
+
+    const formattedTime = `${hours}:${minutes}`;
+
+    console.log(`Ya existe un registro en: ${tareas} a las ${formattedTime}`);
     return; // Detener la ejecución si la tarea ya existe
   }
 
@@ -142,7 +151,16 @@ export const CreditoAmortizador = async (
   const tareaInsertada = await validarEInsertarTarea(tareas);
 
   if (!tareaInsertada) {
-    console.log("ya existe un registro en:", tareas);
+    // Obtener la hora y los minutos actuales
+    const now = new Date();
+
+    // Formatear la hora y los minutos
+    const hours = now.getHours().toString().padStart(2, "0");
+    const minutes = now.getMinutes().toString().padStart(2, "0");
+
+    const formattedTime = `${hours}:${minutes}`;
+
+    console.log(`Ya existe un registro en: ${tareas} a las ${formattedTime}`);
     return; // Detener la ejecución si la tarea ya existe
   }
 
@@ -293,7 +311,16 @@ export const NuevoSaldoAnteriorBolsa = async (
   const tareaInsertada = await validarEInsertarTarea(tareas);
 
   if (!tareaInsertada) {
-    console.log("ya existe un registro en:", tareas);
+    // Obtener la hora y los minutos actuales
+    const now = new Date();
+
+    // Formatear la hora y los minutos
+    const hours = now.getHours().toString().padStart(2, "0");
+    const minutes = now.getMinutes().toString().padStart(2, "0");
+
+    const formattedTime = `${hours}:${minutes}`;
+
+    console.log(`Ya existe un registro en: ${tareas} a las ${formattedTime}`);
     return; // Detener la ejecución si la tarea ya existe
   }
 
@@ -491,7 +518,16 @@ export const NuevoSaldoAnteriorproveedores = async (
   const tareaInsertada = await validarEInsertarTarea(tareas);
 
   if (!tareaInsertada) {
-    console.log("ya existe un registro en:", tareas);
+    // Obtener la hora y los minutos actuales
+    const now = new Date();
+
+    // Formatear la hora y los minutos
+    const hours = now.getHours().toString().padStart(2, "0");
+    const minutes = now.getMinutes().toString().padStart(2, "0");
+
+    const formattedTime = `${hours}:${minutes}`;
+
+    console.log(`Ya existe un registro en: ${tareas} a las ${formattedTime}`);
     return; // Detener la ejecución si la tarea ya existe
   }
 
@@ -664,7 +700,16 @@ export const NotificarMensaje = async (
   const tareaInsertada = await validarEInsertarTarea(tareas);
 
   if (!tareaInsertada) {
-    console.log("ya existe un registro en:", tareas);
+    // Obtener la hora y los minutos actuales
+    const now = new Date();
+
+    // Formatear la hora y los minutos
+    const hours = now.getHours().toString().padStart(2, "0");
+    const minutes = now.getMinutes().toString().padStart(2, "0");
+
+    const formattedTime = `${hours}:${minutes}`;
+
+    console.log(`Ya existe un registro en: ${tareas} a las ${formattedTime}`);
     return; // Detener la ejecución si la tarea ya existe
   }
 
@@ -697,9 +742,19 @@ export const ListaCobranza = async (
   const tareaInsertada = await validarEInsertarTarea(tareas);
 
   if (!tareaInsertada) {
-    console.log("ya existe un registro en:", tareas);
+    // Obtener la hora y los minutos actuales
+    const now = new Date();
+
+    // Formatear la hora y los minutos
+    const hours = now.getHours().toString().padStart(2, "0");
+    const minutes = now.getMinutes().toString().padStart(2, "0");
+
+    const formattedTime = `${hours}:${minutes}`;
+
+    console.log(`Ya existe un registro en: ${tareas} a las ${formattedTime}`);
     return; // Detener la ejecución si la tarea ya existe
   }
+
   try {
     // Consulta SQL para eliminar todos los registros de la tabla 'gestion_cartera'
     const deleteQuery = "DELETE FROM gestion_cartera";
@@ -849,7 +904,16 @@ export const listadoCobranzaActualizar = async (
   const tareaInsertada = await validarEInsertarTarea(tareas);
 
   if (!tareaInsertada) {
-    console.log("ya existe un registro en:", tareas);
+    // Obtener la hora y los minutos actuales
+    const now = new Date();
+
+    // Formatear la hora y los minutos
+    const hours = now.getHours().toString().padStart(2, "0");
+    const minutes = now.getMinutes().toString().padStart(2, "0");
+
+    const formattedTime = `${hours}:${minutes}`;
+
+    console.log(`Ya existe un registro en: ${tareas} a las ${formattedTime}`);
     return; // Detener la ejecución si la tarea ya existe
   }
 
@@ -873,7 +937,16 @@ export const TareasProgramadasServidor = async (
   const tareaInsertada = await validarEInsertarTarea(tareas);
 
   if (!tareaInsertada) {
-    console.log("ya existe un registro en:", tareas);
+    // Obtener la hora y los minutos actuales
+    const now = new Date();
+
+    // Formatear la hora y los minutos
+    const hours = now.getHours().toString().padStart(2, "0");
+    const minutes = now.getMinutes().toString().padStart(2, "0");
+
+    const formattedTime = `${hours}:${minutes}`;
+
+    console.log(`Ya existe un registro en: ${tareas} a las ${formattedTime}`);
     return; // Detener la ejecución si la tarea ya existe
   }
 
@@ -951,7 +1024,16 @@ export const TareasProgramadasSinMora = async (
   const tareaInsertada = await validarEInsertarTarea(tareas);
 
   if (!tareaInsertada) {
-    console.log("ya existe un registro en:", tareas);
+    // Obtener la hora y los minutos actuales
+    const now = new Date();
+
+    // Formatear la hora y los minutos
+    const hours = now.getHours().toString().padStart(2, "0");
+    const minutes = now.getMinutes().toString().padStart(2, "0");
+
+    const formattedTime = `${hours}:${minutes}`;
+
+    console.log(`Ya existe un registro en: ${tareas} a las ${formattedTime}`);
     return; // Detener la ejecución si la tarea ya existe
   }
 
@@ -975,7 +1057,16 @@ export const TareasProgramadasMoraPrimera = async (
   const tareaInsertada = await validarEInsertarTarea(tareas);
 
   if (!tareaInsertada) {
-    console.log("ya existe un registro en:", tareas);
+    // Obtener la hora y los minutos actuales
+    const now = new Date();
+
+    // Formatear la hora y los minutos
+    const hours = now.getHours().toString().padStart(2, "0");
+    const minutes = now.getMinutes().toString().padStart(2, "0");
+
+    const formattedTime = `${hours}:${minutes}`;
+
+    console.log(`Ya existe un registro en: ${tareas} a las ${formattedTime}`);
     return; // Detener la ejecución si la tarea ya existe
   }
 
@@ -999,7 +1090,16 @@ export const TareasProgramadasMoraSegundo = async (
   const tareaInsertada = await validarEInsertarTarea(tareas);
 
   if (!tareaInsertada) {
-    console.log("ya existe un registro en:", tareas);
+    // Obtener la hora y los minutos actuales
+    const now = new Date();
+
+    // Formatear la hora y los minutos
+    const hours = now.getHours().toString().padStart(2, "0");
+    const minutes = now.getMinutes().toString().padStart(2, "0");
+
+    const formattedTime = `${hours}:${minutes}`;
+
+    console.log(`Ya existe un registro en: ${tareas} a las ${formattedTime}`);
     return; // Detener la ejecución si la tarea ya existe
   }
 
@@ -1023,9 +1123,19 @@ export const TareasProgramadasMoraTercero = async (
   const tareaInsertada = await validarEInsertarTarea(tareas);
 
   if (!tareaInsertada) {
-    console.log("ya existe un registro en:", tareas);
+    // Obtener la hora y los minutos actuales
+    const now = new Date();
+
+    // Formatear la hora y los minutos
+    const hours = now.getHours().toString().padStart(2, "0");
+    const minutes = now.getMinutes().toString().padStart(2, "0");
+
+    const formattedTime = `${hours}:${minutes}`;
+
+    console.log(`Ya existe un registro en: ${tareas} a las ${formattedTime}`);
     return; // Detener la ejecución si la tarea ya existe
   }
+
   try {
     // Hacer la solicitud HTTP para Recalcular Créditos Vencidos
     const recordarSinMora = await axios.post(
@@ -1046,9 +1156,19 @@ export const TareasProgramadasMoraCuatro = async (
   const tareaInsertada = await validarEInsertarTarea(tareas);
 
   if (!tareaInsertada) {
-    console.log("ya existe un registro en:", tareas);
+    // Obtener la hora y los minutos actuales
+    const now = new Date();
+
+    // Formatear la hora y los minutos
+    const hours = now.getHours().toString().padStart(2, "0");
+    const minutes = now.getMinutes().toString().padStart(2, "0");
+
+    const formattedTime = `${hours}:${minutes}`;
+
+    console.log(`Ya existe un registro en: ${tareas} a las ${formattedTime}`);
     return; // Detener la ejecución si la tarea ya existe
   }
+
   try {
     // Hacer la solicitud HTTP para Recalcular Créditos Vencidos
     const recordarSinMora = await axios.post(
