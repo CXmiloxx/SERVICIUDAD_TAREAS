@@ -6,6 +6,8 @@ import { RowDataPacket } from "mysql2";
 import axios from "axios";
 import { NOTIFICATION_API, API_SERVER, ADIN_API } from "../../config";
 import moment from "moment-timezone";
+import mysql from "mysql2/promise";
+
 
 const apiURL_notificar = NOTIFICATION_API;
 
@@ -1075,7 +1077,400 @@ export const TareasProgramadasMoraCuatro = async (
   }
 };
 
+
+
+
+export const sincronizarMysqlGOLDRA = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  const tareas = "sincronizar MYSQL GOLDRA";
+  const tareaInsertada = await validarEInsertarTarea(tareas);
+  const { fecha, hora } = obtenerFechaHoraBogota();
+
+  if (!tareaInsertada) {
+    console.log("Ya existe un registro en:", tareas, fecha, hora);
+    return; // Detener la ejecución si la tarea ya existe
+  }
+
+  let sourceConnection: mysql.Connection | null = null;
+  let targetConnection: mysql.Connection | null = null;
+
+  try {
+    // Conexión al servidor de origen
+    sourceConnection = await mysql.createConnection({
+      host: '192.168.1.150',
+      user: 'MICHEL_SERVER',
+      password: 'Michel137909*',
+      database: 'GOLDRA_LICANCE'
+    });
+
+    // Conexión al servidor de destino
+    targetConnection = await mysql.createConnection({
+      host: '192.168.1.202',
+      user: 'MICHEL_SERVER',
+      password: 'Michel137909**',
+      database: 'GOLDRA_LICANCE'
+    });
+
+    // Iniciar la transacción en el servidor de destino
+    await targetConnection.beginTransaction();
+
+    // Obtener lista de tablas del origen
+    const [tables] = await sourceConnection.query('SHOW TABLES') as mysql.RowDataPacket[];
+    const tableNames = tables.map((row: any) => Object.values(row)[0]);
+
+    for (const tableName of tableNames) {
+      // Copiar datos de la tabla de origen a la de destino
+      const [rows] = await sourceConnection.query(`SELECT * FROM ${tableName}`) as [mysql.RowDataPacket[], mysql.FieldPacket[]];
+      if (rows.length === 0) continue;
+
+      const columns = Object.keys(rows[0]).join(', ');
+      const valuesPlaceholders = Object.keys(rows[0]).map(() => '?').join(', ');
+      const updateSet = Object.keys(rows[0]).map(key => `${key} = VALUES(${key})`).join(', ');
+
+      const insertQuery = `INSERT INTO ${tableName} (${columns}) VALUES (${valuesPlaceholders}) ON DUPLICATE KEY UPDATE ${updateSet}`;
+
+      for (const row of rows) {
+        await targetConnection.query(insertQuery, Object.values(row));
+      }
+    }
+
+    // Confirmar la transacción
+    await targetConnection.commit();
+
+    console.log('Sincronización completada con éxito.');
+    res.status(200).json({ message: "Sincronización completada con éxito" });
+
+  } catch (error) {
+    console.error("Error en la sincronización:", error);
+
+    // Revertir la transacción en caso de error
+    if (targetConnection) {
+      await targetConnection.rollback();
+    }
+
+    // Manejar el error y enviar una respuesta de error al cliente
+    res.status(500).json({ error: "Error en la sincronización" });
+  } finally {
+    // Cerrar las conexiones
+    if (sourceConnection) {
+      await sourceConnection.end();
+    }
+    if (targetConnection) {
+      await targetConnection.end();
+    }
+  }
+};
+
+
+
+// export const sincronizarMysqlSOLUCREDITO = async (
+//   req: Request,
+//   res: Response
+// ): Promise<void> => {
+//   const tareas = "sincronizar MYSQL SOLUCREDITO";
+//   const tareaInsertada = await validarEInsertarTarea(tareas);
+//   const { fecha, hora } = obtenerFechaHoraBogota();
+
+//   if (!tareaInsertada) {
+//     console.log("Ya existe un registro en:", tareas, fecha, hora);
+//     return; // Detener la ejecución si la tarea ya existe
+//   }
+
+//   let sourceConnection: mysql.Connection | null = null;
+//   let targetConnection: mysql.Connection | null = null;
+
+//   try {
+//     // Conexión al servidor de origen
+//     sourceConnection = await mysql.createConnection({
+//       host: '192.168.1.150',
+//       user: 'MICHEL_SERVER',
+//       password: 'Michel137909*',
+//       database: 'SOLUCREDITO'
+//     });
+
+//     // Conexión al servidor de destino
+//     targetConnection = await mysql.createConnection({
+//       host: '192.168.1.202',
+//       user: 'MICHEL_SERVER',
+//       password: 'Michel137909**',
+//       database: 'SOLUCREDITO'
+//     });
+
+//     // Iniciar la transacción en el servidor de destino
+//     await targetConnection.beginTransaction();
+
+//     // Lista de tablas en orden de dependencia
+//     const orderedTables = [
+//       'user_cliente', // Debe ir primero ya que otras tablas dependen de esta
+//       'user_admin',
+//       'bolsas',
+//       'estudio_de_credito',
+//       'info_personal',
+//       'info_contacto',
+//       'info_bancario',
+//       'info_laboral',
+//       'info_referencias',
+//       'documentos_estudio',
+//       'documentos_registro',
+//       'detalle_credito',
+//       'amortizacion',
+//       'desembolso',
+//       'detalle_efecty',
+//       'comentarios',
+//       'saldo_anterior',
+//       'saldo_anterior_proveedor',
+//       'proveedor'
+//     ];
+
+//     // Copiar datos de la tabla de origen a la de destino
+//     for (const tableName of orderedTables) {
+//       try {
+//         const [rows] = await sourceConnection.query(`SELECT * FROM ${tableName}`) as [mysql.RowDataPacket[], mysql.FieldPacket[]];
+//         if (rows.length === 0) continue;
+
+//         const columns = Object.keys(rows[0]).join(', ');
+//         const valuesPlaceholders = Object.keys(rows[0]).map(() => '?').join(', ');
+//         const updateSet = Object.keys(rows[0]).map(key => `${key} = VALUES(${key})`).join(', ');
+
+//         const insertQuery = `INSERT INTO ${tableName} (${columns}) VALUES (${valuesPlaceholders}) ON DUPLICATE KEY UPDATE ${updateSet}`;
+
+//         for (const row of rows) {
+//           try {
+//             await targetConnection.query(insertQuery, Object.values(row));
+//           } catch (err) {
+//             // Manejar errores específicos de claves foráneas aquí
+//             if (err.code === 'ER_NO_REFERENCED_ROW_2') {
+//               console.warn(`Error de clave foránea en la tabla ${tableName}: ${err.message}`);
+//               // Puedes optar por registrar estos errores o manejarlos de otra manera según sea necesario
+//             } else {
+//               throw err;
+//             }
+//           }
+//         }
+//       } catch (err) {
+//         console.error(`Error al copiar datos en la tabla ${tableName}: ${err.message}`);
+//         // Continuar con la siguiente tabla si hay un error en una tabla específica
+//       }
+//     }
+
+//     // Confirmar la transacción
+//     await targetConnection.commit();
+
+//     console.log('Sincronización completada con éxito. SOLUCREDITO');
+//     res.status(200).json({ message: "Sincronización completada con éxito SOLUCREDITO" });
+
+//   } catch (error) {
+//     console.error("Error en la sincronización: SOLUCREDITO", error);
+
+//     // Revertir la transacción en caso de error
+//     if (targetConnection) {
+//       await targetConnection.rollback();
+//     }
+
+//     // Manejar el error y enviar una respuesta de error al cliente
+//     res.status(500).json({ error: "Error en la sincronización SOLUCREDITO" });
+//   } finally {
+//     // Cerrar las conexiones
+//     if (sourceConnection) {
+//       await sourceConnection.end();
+//     }
+//     if (targetConnection) {
+//       await targetConnection.end();
+//     }
+//   }
+// };
+
+
 //  dia y hora bogota colombia
+
+export const sincronizarMysqlSOLUCREDITO = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  const tareas = "sincronizar MYSQL SOLUCREDITO";
+  const tareaInsertada = await validarEInsertarTarea(tareas);
+  const { fecha, hora } = obtenerFechaHoraBogota();
+
+  if (!tareaInsertada) {
+    console.log("Ya existe un registro en:", tareas, fecha, hora);
+    return; // Detener la ejecución si la tarea ya existe
+  }
+
+  let sourceConnection: mysql.Connection | null = null;
+  let targetConnection: mysql.Connection | null = null;
+
+  try {
+    // Conexión al servidor de origen
+    sourceConnection = await mysql.createConnection({
+      host: '192.168.1.150',
+      user: 'MICHEL_SERVER',
+      password: 'Michel137909*',
+      database: 'SOLUCREDITO'
+    });
+
+    // Conexión al servidor de destino
+    targetConnection = await mysql.createConnection({
+      host: '192.168.1.202',
+      user: 'MICHEL_SERVER',
+      password: 'Michel137909**',
+      database: 'SOLUCREDITO'
+    });
+
+    // Iniciar la transacción en el servidor de destino
+    await targetConnection.beginTransaction();
+
+    // Lista de tablas en orden de dependencia
+    // const orderedTables = [
+    //   'user_cliente', // Debe ir primero ya que otras tablas dependen de esta
+    //   'user_admin',
+    //   'bolsas',
+    //   'estudio_de_credito',
+    //   'info_personal',
+    //   'info_contacto',
+    //   'info_bancario',
+    //   'info_laboral',
+    //   'info_referencias',
+    //   'documentos_estudio',
+    //   'documentos_registro',
+    //   'detalle_credito',
+    //   'amortizacion',
+    //   'desembolso',
+    //   'detalle_efecty',
+    //   'comentarios',
+    //   'saldo_anterior',
+    //   'saldo_anterior_proveedor',
+    //   'proveedor'
+    // ];
+
+    const orderedTables = [
+  'user_cliente', // Debe ir primero ya que otras tablas dependen de esta
+  'user_admin',
+  'bolsas',
+  'estudio_de_credito',
+  'info_personal',
+  'info_contacto',
+  'info_bancario',
+  'info_laboral',
+  'info_referencias',
+  'documentos_estudio',
+  'documentos_registro',
+  'detalle_credito',
+  'amortizacion',
+  'desembolso',
+  'detalle_efecty',
+  'comentarios',
+  'saldo_anterior',
+  'saldo_anterior_proveedor',
+  'archivo_migra',
+  'cifin',
+  'confirmar_codigo',
+  'estudios_realizados',
+  'gastos',
+  'geo_city',
+  'geo_department',
+  'gestion_cartera',
+  'historial_pagos',
+  'inversiones',
+  'lista_bancos',
+  'lista_comentario',
+  'lista_documentos',
+  'lista_gastos',
+  'lista_tipo_credito',
+  'mi_ruta',
+  'pagos_payvalida',
+  'tareasprogramadas',
+  'transferencias'
+];
+
+
+    // Copiar datos de las tablas con claves foráneas
+    for (const tableName of orderedTables) {
+      try {
+        const [rows] = await sourceConnection.query(`SELECT * FROM ${tableName}`) as [mysql.RowDataPacket[], mysql.FieldPacket[]];
+        if (rows.length === 0) continue;
+
+        const columns = Object.keys(rows[0]).join(', ');
+        const valuesPlaceholders = Object.keys(rows[0]).map(() => '?').join(', ');
+        const updateSet = Object.keys(rows[0]).map(key => `${key} = VALUES(${key})`).join(', ');
+
+        const insertQuery = `INSERT INTO ${tableName} (${columns}) VALUES (${valuesPlaceholders}) ON DUPLICATE KEY UPDATE ${updateSet}`;
+
+        for (const row of rows) {
+          try {
+            await targetConnection.query(insertQuery, Object.values(row));
+          } catch (err) {
+            // Manejar errores específicos de claves foráneas aquí
+            if (err.code === 'ER_NO_REFERENCED_ROW_2') {
+              console.warn(`Error de clave foránea en la tabla ${tableName}: ${err.message}`);
+              // Puedes optar por registrar estos errores o manejarlos de otra manera según sea necesario
+            } else {
+              throw err;
+            }
+          }
+        }
+      } catch (err) {
+        console.error(`Error al copiar datos en la tabla ${tableName}: ${err.message}`);
+        // Continuar con la siguiente tabla si hay un error en una tabla específica
+      }
+    }
+
+    // Obtener lista de todas las tablas del origen
+    const [allTables] = await sourceConnection.query('SHOW TABLES') as mysql.RowDataPacket[];
+    const allTableNames = allTables.map((row: any) => Object.values(row)[0]);
+
+    // Filtrar las tablas que no tienen claves foráneas
+    const remainingTables = allTableNames.filter(tableName => !orderedTables.includes(tableName));
+
+    // Copiar datos de las tablas restantes
+    for (const tableName of remainingTables) {
+      try {
+        const [rows] = await sourceConnection.query(`SELECT * FROM ${tableName}`) as [mysql.RowDataPacket[], mysql.FieldPacket[]];
+        if (rows.length === 0) continue;
+
+        const columns = Object.keys(rows[0]).join(', ');
+        const valuesPlaceholders = Object.keys(rows[0]).map(() => '?').join(', ');
+        const updateSet = Object.keys(rows[0]).map(key => `${key} = VALUES(${key})`).join(', ');
+
+        const insertQuery = `INSERT INTO ${tableName} (${columns}) VALUES (${valuesPlaceholders}) ON DUPLICATE KEY UPDATE ${updateSet}`;
+
+        for (const row of rows) {
+          await targetConnection.query(insertQuery, Object.values(row));
+        }
+      } catch (err) {
+        console.error(`Error al copiar datos en la tabla ${tableName}: ${err.message}`);
+      }
+    }
+
+    // Confirmar la transacción
+    await targetConnection.commit();
+
+    console.log('Sincronización completada con éxito. SOLUCREDITO');
+    res.status(200).json({ message: "Sincronización completada con éxito SOLUCREDITO" });
+
+  } catch (error) {
+    console.error("Error en la sincronización: SOLUCREDITO", error);
+
+    // Revertir la transacción en caso de error
+    if (targetConnection) {
+      await targetConnection.rollback();
+    }
+
+    // Manejar el error y enviar una respuesta de error al cliente
+    res.status(500).json({ error: "Error en la sincronización SOLUCREDITO" });
+  } finally {
+    // Cerrar las conexiones
+    if (sourceConnection) {
+      await sourceConnection.end();
+    }
+    if (targetConnection) {
+      await targetConnection.end();
+    }
+  }
+};
+
+
 const obtenerFechaHoraBogota = (): { fecha: string; hora: string } => {
   // Obtener la fecha y hora actual en la zona horaria de Bogotá
   const fechaHoraBogota = moment().tz("America/Bogota");

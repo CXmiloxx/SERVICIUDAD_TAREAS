@@ -23,6 +23,8 @@ import {
   TareasProgramadasMoraTercero,
   TareasProgramadasMoraCuatro,
   listadoCobranzaActualizar,
+  sincronizarMysqlGOLDRA,
+  sincronizarMysqlSOLUCREDITO,
 } from "./controllers/TareasProgramadas/ProgramarSanciones.js";
 
 const app = express();
@@ -30,6 +32,21 @@ const app = express();
 app.use(
   cors({
     origin: [
+
+        // red de TIGO
+  "http://201.236.243.161:3070",
+  "http://201.236.243.161:5173",
+
+  "http://192.168.1.150:3070",
+  "http://192.168.1.150:5173",
+
+  // red de CLARO
+  "http://186.87.165.129:3070",
+  "http://186.87.165.129:5173",
+
+  "http://192.168.0.150:3070",
+  "http://192.168.0.150:5173",
+
       "http://localhost:5173",
       "http://localhost:3070",
       "https://pago.solucredito.com.co",
@@ -99,7 +116,7 @@ cron.schedule("11 * * * *", async () => {
 });
 
 // // Enviar MSM
-cron.schedule("2 1 * * *", async () => {
+cron.schedule("10 * * * *", async () => {
   console.log("Iniciando MSM.");
 
   const fakeReq = {} as express.Request; // Puedes personalizar esto según tus necesidades
@@ -154,37 +171,7 @@ cron.schedule("22 * * * *", async () => {
   console.log("finalizado lista de cobranza actualizar");
 });
 
-// ////****************************************** */
 
-// // Tareas directas a las URL
-// cron.schedule("35 7 * * *", async () => {
-//   console.log("Iniciando tareas directas URL");
-
-//   const fakeReq = {} as express.Request;
-//   const fakeRes = {
-//     status: (statusCode) => ({ json: (data) => console.log(data) }),
-//   } as express.Response;
-
-//   await TareasProgramadasServidor(fakeReq, fakeRes);
-
-//   console.log("finalizado tareas directas URL");
-// });
-
-// ////****************************************** */
-
-// Tareas directas a las URL  recordar 0 dias en mora
-// cron.schedule("15,20 10 * * 1-6", async () => {
-//   console.log("Iniciando tareas  recordar mora 0");
-
-//   const fakeReq = {} as express.Request;
-//   const fakeRes = {
-//     status: (statusCode) => ({ json: (data) => console.log(data) }),
-//   } as express.Response;
-
-//   await TareasProgramadasSinMora(fakeReq, fakeRes);
-
-//   console.log("finalizado tareas recordar mora 0");
-// });
 
 // Tareas directas a las URL  recordar 0 dias en mora
 cron.schedule("15,20 10 * * 1-6", async () => {
@@ -356,6 +343,49 @@ cron.schedule("30,41 13 * * 1", async () => {
   } else {
     console.log("Hoy es un día festivo. La tarea no se ejecutará.");
   }
+});
+
+
+// // Nuevo saldo de listado de cobro
+cron.schedule("8 * * * 1,4", async () => {
+  console.log("Iniciando lista de cobranza");
+
+  const fakeReq = {} as express.Request;
+  const fakeRes = {
+    status: (statusCode) => ({ json: (data) => console.log(data) }),
+  } as express.Response;
+
+  await ListaCobranza(fakeReq, fakeRes);
+
+  console.log("finalizado lista de cobranza");
+});
+
+// Actualizar o sincronizar base de datos GOLDRA
+cron.schedule("16 * * * *", async () => {
+  console.log("sincronizar MYSQL GOLDRA");
+
+  const fakeReq = {} as express.Request;
+  const fakeRes = {
+    status: (statusCode) => ({ json: (data) => console.log(data) }),
+  } as express.Response;
+
+  await sincronizarMysqlGOLDRA(fakeReq, fakeRes);
+
+  console.log("finalizado sincronizar MYSQL GOLDRA");
+});
+
+// Actualizar o sincronizar base de datos SOLUCREDITO
+cron.schedule("19 * * * *", async () => {
+  console.log("sincronizar MYSQL SOLUCREDITO");
+
+  const fakeReq = {} as express.Request;
+  const fakeRes = {
+    status: (statusCode) => ({ json: (data) => console.log(data) }),
+  } as express.Response;
+
+  await sincronizarMysqlSOLUCREDITO(fakeReq, fakeRes);
+
+  console.log("finalizado sincronizar MYSQL SOLUCREDITO");
 });
 
 app.listen(PORT, () => {
