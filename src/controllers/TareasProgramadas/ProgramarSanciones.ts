@@ -9,6 +9,7 @@ import moment from "moment-timezone";
 import mysql from "mysql2/promise";
 
 
+
 const apiURL_notificar = NOTIFICATION_API;
 
 const apiURL_server = API_SERVER;
@@ -1079,7 +1080,7 @@ export const TareasProgramadasMoraCuatro = async (
 
 
 
-
+//  actualiza la base de datos de GOLDRA servidor 186
 export const sincronizarMysqlGOLDRA = async (
   req: Request,
   res: Response
@@ -1164,132 +1165,12 @@ export const sincronizarMysqlGOLDRA = async (
 };
 
 
-
-// export const sincronizarMysqlSOLUCREDITO = async (
-//   req: Request,
-//   res: Response
-// ): Promise<void> => {
-//   const tareas = "sincronizar MYSQL SOLUCREDITO";
-//   const tareaInsertada = await validarEInsertarTarea(tareas);
-//   const { fecha, hora } = obtenerFechaHoraBogota();
-
-//   if (!tareaInsertada) {
-//     console.log("Ya existe un registro en:", tareas, fecha, hora);
-//     return; // Detener la ejecución si la tarea ya existe
-//   }
-
-//   let sourceConnection: mysql.Connection | null = null;
-//   let targetConnection: mysql.Connection | null = null;
-
-//   try {
-//     // Conexión al servidor de origen
-//     sourceConnection = await mysql.createConnection({
-//       host: '192.168.1.150',
-//       user: 'MICHEL_SERVER',
-//       password: 'Michel137909*',
-//       database: 'SOLUCREDITO'
-//     });
-
-//     // Conexión al servidor de destino
-//     targetConnection = await mysql.createConnection({
-//       host: '192.168.1.202',
-//       user: 'MICHEL_SERVER',
-//       password: 'Michel137909**',
-//       database: 'SOLUCREDITO'
-//     });
-
-//     // Iniciar la transacción en el servidor de destino
-//     await targetConnection.beginTransaction();
-
-//     // Lista de tablas en orden de dependencia
-//     const orderedTables = [
-//       'user_cliente', // Debe ir primero ya que otras tablas dependen de esta
-//       'user_admin',
-//       'bolsas',
-//       'estudio_de_credito',
-//       'info_personal',
-//       'info_contacto',
-//       'info_bancario',
-//       'info_laboral',
-//       'info_referencias',
-//       'documentos_estudio',
-//       'documentos_registro',
-//       'detalle_credito',
-//       'amortizacion',
-//       'desembolso',
-//       'detalle_efecty',
-//       'comentarios',
-//       'saldo_anterior',
-//       'saldo_anterior_proveedor',
-//       'proveedor'
-//     ];
-
-//     // Copiar datos de la tabla de origen a la de destino
-//     for (const tableName of orderedTables) {
-//       try {
-//         const [rows] = await sourceConnection.query(`SELECT * FROM ${tableName}`) as [mysql.RowDataPacket[], mysql.FieldPacket[]];
-//         if (rows.length === 0) continue;
-
-//         const columns = Object.keys(rows[0]).join(', ');
-//         const valuesPlaceholders = Object.keys(rows[0]).map(() => '?').join(', ');
-//         const updateSet = Object.keys(rows[0]).map(key => `${key} = VALUES(${key})`).join(', ');
-
-//         const insertQuery = `INSERT INTO ${tableName} (${columns}) VALUES (${valuesPlaceholders}) ON DUPLICATE KEY UPDATE ${updateSet}`;
-
-//         for (const row of rows) {
-//           try {
-//             await targetConnection.query(insertQuery, Object.values(row));
-//           } catch (err) {
-//             // Manejar errores específicos de claves foráneas aquí
-//             if (err.code === 'ER_NO_REFERENCED_ROW_2') {
-//               console.warn(`Error de clave foránea en la tabla ${tableName}: ${err.message}`);
-//               // Puedes optar por registrar estos errores o manejarlos de otra manera según sea necesario
-//             } else {
-//               throw err;
-//             }
-//           }
-//         }
-//       } catch (err) {
-//         console.error(`Error al copiar datos en la tabla ${tableName}: ${err.message}`);
-//         // Continuar con la siguiente tabla si hay un error en una tabla específica
-//       }
-//     }
-
-//     // Confirmar la transacción
-//     await targetConnection.commit();
-
-//     console.log('Sincronización completada con éxito. SOLUCREDITO');
-//     res.status(200).json({ message: "Sincronización completada con éxito SOLUCREDITO" });
-
-//   } catch (error) {
-//     console.error("Error en la sincronización: SOLUCREDITO", error);
-
-//     // Revertir la transacción en caso de error
-//     if (targetConnection) {
-//       await targetConnection.rollback();
-//     }
-
-//     // Manejar el error y enviar una respuesta de error al cliente
-//     res.status(500).json({ error: "Error en la sincronización SOLUCREDITO" });
-//   } finally {
-//     // Cerrar las conexiones
-//     if (sourceConnection) {
-//       await sourceConnection.end();
-//     }
-//     if (targetConnection) {
-//       await targetConnection.end();
-//     }
-//   }
-// };
-
-
-//  dia y hora bogota colombia
-
+//  actualiza la base de datos SOUCREDITO servidor enduro
 export const sincronizarMysqlSOLUCREDITO = async (
   req: Request,
   res: Response
 ): Promise<void> => {
-  const tareas = "sincronizar MYSQL SOLUCREDITO";
+  const tareas = "sincronizar docuemtnos SOLUCREDITO";
   const tareaInsertada = await validarEInsertarTarea(tareas);
   const { fecha, hora } = obtenerFechaHoraBogota();
 
@@ -1321,75 +1202,55 @@ export const sincronizarMysqlSOLUCREDITO = async (
     // Iniciar la transacción en el servidor de destino
     await targetConnection.beginTransaction();
 
-    // Lista de tablas en orden de dependencia
-    // const orderedTables = [
-    //   'user_cliente', // Debe ir primero ya que otras tablas dependen de esta
-    //   'user_admin',
-    //   'bolsas',
-    //   'estudio_de_credito',
-    //   'info_personal',
-    //   'info_contacto',
-    //   'info_bancario',
-    //   'info_laboral',
-    //   'info_referencias',
-    //   'documentos_estudio',
-    //   'documentos_registro',
-    //   'detalle_credito',
-    //   'amortizacion',
-    //   'desembolso',
-    //   'detalle_efecty',
-    //   'comentarios',
-    //   'saldo_anterior',
-    //   'saldo_anterior_proveedor',
-    //   'proveedor'
-    // ];
-
     const orderedTables = [
-  'user_cliente', // Debe ir primero ya que otras tablas dependen de esta
-  'user_admin',
-  'bolsas',
-  'estudio_de_credito',
-  'info_personal',
-  'info_contacto',
-  'info_bancario',
-  'info_laboral',
-  'info_referencias',
-  'documentos_estudio',
-  'documentos_registro',
-  'detalle_credito',
-  'amortizacion',
-  'desembolso',
-  'detalle_efecty',
-  'comentarios',
-  'saldo_anterior',
-  'saldo_anterior_proveedor',
-  'archivo_migra',
-  'cifin',
-  'confirmar_codigo',
-  'estudios_realizados',
-  'gastos',
-  'geo_city',
-  'geo_department',
-  'gestion_cartera',
-  'historial_pagos',
-  'inversiones',
-  'lista_bancos',
-  'lista_comentario',
-  'lista_documentos',
-  'lista_gastos',
-  'lista_tipo_credito',
-  'mi_ruta',
-  'pagos_payvalida',
-  'tareasprogramadas',
-  'transferencias'
-];
-
+      'user_cliente',
+      'user_admin',
+      'bolsas',
+      'estudio_de_credito',
+      'info_personal',
+      'info_contacto',
+      'info_bancario',
+      'info_laboral',
+      'info_referencias',
+      'documentos_estudio',
+      'documentos_registro',
+      'detalle_credito',
+      'amortizacion',
+      'desembolso',
+      'detalle_efecty',
+      'comentarios',
+      'saldo_anterior',
+      'saldo_anterior_proveedor',
+      'archivo_migra',
+      'cifin',
+      'confirmar_codigo',
+      'estudios_realizados',
+      'gastos',
+      'geo_city',
+      'geo_department',
+      'gestion_cartera',
+      'historial_pagos',
+      'inversiones',
+      'lista_bancos',
+      'lista_comentario',
+      'lista_documentos',
+      'lista_gastos',
+      'lista_tipo_credito',
+      'mi_ruta',
+      'pagos_payvalida',
+      'tareasprogramadas',
+      'transferencias'
+    ];
 
     // Copiar datos de las tablas con claves foráneas
     for (const tableName of orderedTables) {
+      console.log(`Iniciando sincronización para la tabla ${tableName}...`);
       try {
         const [rows] = await sourceConnection.query(`SELECT * FROM ${tableName}`) as [mysql.RowDataPacket[], mysql.FieldPacket[]];
-        if (rows.length === 0) continue;
+        if (rows.length === 0) {
+          console.log(`Tabla ${tableName} está vacía. Saltando...`);
+          continue;
+        }
 
         const columns = Object.keys(rows[0]).join(', ');
         const valuesPlaceholders = Object.keys(rows[0]).map(() => '?').join(', ');
@@ -1404,15 +1265,14 @@ export const sincronizarMysqlSOLUCREDITO = async (
             // Manejar errores específicos de claves foráneas aquí
             if (err.code === 'ER_NO_REFERENCED_ROW_2') {
               console.warn(`Error de clave foránea en la tabla ${tableName}: ${err.message}`);
-              // Puedes optar por registrar estos errores o manejarlos de otra manera según sea necesario
             } else {
               throw err;
             }
           }
         }
+        console.log(`Tabla ${tableName} sincronizada con éxito.`);
       } catch (err) {
         console.error(`Error al copiar datos en la tabla ${tableName}: ${err.message}`);
-        // Continuar con la siguiente tabla si hay un error en una tabla específica
       }
     }
 
@@ -1425,9 +1285,13 @@ export const sincronizarMysqlSOLUCREDITO = async (
 
     // Copiar datos de las tablas restantes
     for (const tableName of remainingTables) {
+      console.log(`Iniciando sincronización para la tabla sin claves foráneas ${tableName}...`);
       try {
         const [rows] = await sourceConnection.query(`SELECT * FROM ${tableName}`) as [mysql.RowDataPacket[], mysql.FieldPacket[]];
-        if (rows.length === 0) continue;
+        if (rows.length === 0) {
+          console.log(`Tabla ${tableName} está vacía. Saltando...`);
+          continue;
+        }
 
         const columns = Object.keys(rows[0]).join(', ');
         const valuesPlaceholders = Object.keys(rows[0]).map(() => '?').join(', ');
@@ -1438,6 +1302,7 @@ export const sincronizarMysqlSOLUCREDITO = async (
         for (const row of rows) {
           await targetConnection.query(insertQuery, Object.values(row));
         }
+        console.log(`Tabla ${tableName} sincronizada con éxito.`);
       } catch (err) {
         console.error(`Error al copiar datos en la tabla ${tableName}: ${err.message}`);
       }
@@ -1445,7 +1310,6 @@ export const sincronizarMysqlSOLUCREDITO = async (
 
     // Confirmar la transacción
     await targetConnection.commit();
-
     console.log('Sincronización completada con éxito. SOLUCREDITO');
     res.status(200).json({ message: "Sincronización completada con éxito SOLUCREDITO" });
 

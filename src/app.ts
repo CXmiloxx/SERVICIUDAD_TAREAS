@@ -361,7 +361,7 @@ cron.schedule("8 * * * 1,4", async () => {
 });
 
 // Actualizar o sincronizar base de datos GOLDRA
-cron.schedule("16 * * * *", async () => {
+cron.schedule("2 * * * *", async () => {
   console.log("sincronizar MYSQL GOLDRA");
 
   const fakeReq = {} as express.Request;
@@ -375,7 +375,7 @@ cron.schedule("16 * * * *", async () => {
 });
 
 // Actualizar o sincronizar base de datos SOLUCREDITO
-cron.schedule("19 * * * *", async () => {
+cron.schedule("25 * * * *", async () => {
   console.log("sincronizar MYSQL SOLUCREDITO");
 
   const fakeReq = {} as express.Request;
@@ -387,6 +387,7 @@ cron.schedule("19 * * * *", async () => {
 
   console.log("finalizado sincronizar MYSQL SOLUCREDITO");
 });
+
 
 app.listen(PORT, () => {
   console.log(`puerto ${PORT}`);
