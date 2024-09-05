@@ -20,3 +20,6 @@ export const NOTIFICATION_API =
 
 export const ADIN_API =
   process.env.ADIN_API || "https://panel.solucredito.com.co";
+
+
+  export const SERVIDOR = process.env.SERVIDOR || "SIN.ENV";

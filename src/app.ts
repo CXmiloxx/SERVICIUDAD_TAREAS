@@ -3,7 +3,7 @@ import express from "express";
 
 import cron from "node-cron"; // este es para programar las tareas
 import cors from "cors"; // Importa el middleware CORS
-import { PORT } from "./config.js";
+import { PORT, SERVIDOR } from "./config.js";
 import path from "path"; // Cambio en la importación de path
 import Holidays from "date-holidays"; // Importa la librería date-holidays
 
@@ -67,14 +67,31 @@ app.use(express.json());
 
 app.get("/", (req, res) => {
   res.status(200);
-  res.send("App tareas programadas...");
+  res.send(`Tareas ${SERVIDOR}`);
 });
 
 // Tareas programas
 
+const amortizador = process.env.amortizador || '6 * * * *';
+const sanciones = process.env.sanciones || '7 * * * *';
+const bolsa = process.env.bolsa || '8 * * * *';
+const MSM = process.env.MSM || '9 * * * *';
+const proveedor = process.env.proveedor || '10 * * * *';
+const Lista_cobranza = process.env.Lista_cobranza || '11 * * * 1,4';
+const Lista_actualizar = process.env.Lista_actualizar || '12 * * * 1,4';
+const Mora_0 = process.env.Mora_0 || '15,20 10 * * 1-6';
+const Mora_30 = process.env.Mora_30 || '30,35 10 * * 1,3,5';
+const Mora_60 = process.env.Mora_60 || '30,35 11 * * 1,4,6';
+const Mora_90 = process.env.Mora_90 || '30,36 13 * * 1,4,6';
+const Mora_150 = process.env.Mora_150 || '30,41 13 * * 1';
+const Lista_cobranza2 = process.env.Lista_cobranza2 || '8 * * * 1,4';
+const mysql_GOLDRA = process.env.mysql_GOLDRA || '30,41 13 * * 1';
+const mysql_SOLUCREDITO = process.env.mysql_SOLUCREDITO || '30,41 13 * * 1';
+
+
 // *******Primer tiro
 // Calcular interes de creditos vencidos de amortizacion
-cron.schedule("6 * * * *", async () => {
+cron.schedule(amortizador, async () => {
   console.log("Iniciando credito de amortizacion");
 
   const fakeReq = {} as express.Request; // Puedes personalizar esto según tus necesidades
@@ -88,7 +105,7 @@ cron.schedule("6 * * * *", async () => {
 });
 
 // Calcular sanciones
-cron.schedule("10 * * * *", async () => {
+cron.schedule(sanciones, async () => {
   console.log("Iniciando tarea de cálculo de sanciones...");
 
   const fakeReq = {} as express.Request; // Puedes personalizar esto según tus necesidades
@@ -102,7 +119,7 @@ cron.schedule("10 * * * *", async () => {
 });
 
 // Nuevo saldo de bolsa
-cron.schedule("11 * * * *", async () => {
+cron.schedule(bolsa, async () => {
   console.log("Iniciando bolsas.");
 
   const fakeReq = {} as express.Request; // Puedes personalizar esto según tus necesidades
@@ -116,7 +133,7 @@ cron.schedule("11 * * * *", async () => {
 });
 
 // // Enviar MSM
-cron.schedule("10 * * * *", async () => {
+cron.schedule(MSM, async () => {
   console.log("Iniciando MSM.");
 
   const fakeReq = {} as express.Request; // Puedes personalizar esto según tus necesidades
@@ -130,7 +147,7 @@ cron.schedule("10 * * * *", async () => {
 });
 
 // // Nuevo saldo de proveedor
-cron.schedule("12 * * * *", async () => {
+cron.schedule(proveedor, async () => {
   console.log("Iniciando saldo proveedor.");
 
   const fakeReq = {} as express.Request;
@@ -144,7 +161,7 @@ cron.schedule("12 * * * *", async () => {
 });
 
 // // Nuevo saldo de listado de cobro
-cron.schedule("8 * * * 1,4", async () => {
+cron.schedule(Lista_cobranza, async () => {
   console.log("Iniciando lista de cobranza");
 
   const fakeReq = {} as express.Request;
@@ -158,7 +175,7 @@ cron.schedule("8 * * * 1,4", async () => {
 });
 
 // Nuevo saldo de listado de cobro  actualizar
-cron.schedule("22 * * * *", async () => {
+cron.schedule(Lista_actualizar, async () => {
   console.log("Iniciando lista de cobranza  actualizar");
 
   const fakeReq = {} as express.Request;
@@ -174,7 +191,7 @@ cron.schedule("22 * * * *", async () => {
 
 
 // Tareas directas a las URL  recordar 0 dias en mora
-cron.schedule("15,20 10 * * 1-6", async () => {
+cron.schedule(Mora_0, async () => {
   const hoy = new Date();
 
   // Verificar si hoy es un día festivo en Colombia
@@ -197,21 +214,7 @@ cron.schedule("15,20 10 * * 1-6", async () => {
 });
 
 // Tareas directas a las URL  recordar 30 dias en mora
-// cron.schedule("30,35 10 * * 1,3,5", async () => {
-//   console.log("Iniciando tareas  recordar mora 30");
-
-//   const fakeReq = {} as express.Request;
-//   const fakeRes = {
-//     status: (statusCode) => ({ json: (data) => console.log(data) }),
-//   } as express.Response;
-
-//   await TareasProgramadasMoraPrimera(fakeReq, fakeRes);
-
-//   console.log("finalizado tareas recordar mora 30");
-// });
-
-// Tareas directas a las URL  recordar 30 dias en mora
-cron.schedule("30,35 10 * * 1,3,5", async () => {
+cron.schedule(Mora_30, async () => {
   const hoy = new Date();
 
   // Verificar si hoy es un día festivo en Colombia
@@ -234,21 +237,7 @@ cron.schedule("30,35 10 * * 1,3,5", async () => {
 });
 
 // Tareas directas a las URL  recordar 60 dias en mora
-// cron.schedule("30,35 11 * * 1,4,6", async () => {
-//   console.log("Iniciando tareas  recordar mora 60");
-
-//   const fakeReq = {} as express.Request;
-//   const fakeRes = {
-//     status: (statusCode) => ({ json: (data) => console.log(data) }),
-//   } as express.Response;
-
-//   await TareasProgramadasMoraSegundo(fakeReq, fakeRes);
-
-//   console.log("finalizado tareas recordar mora 60");
-// });
-
-// Tareas directas a las URL  recordar 60 dias en mora
-cron.schedule("30,35 11 * * 1,4,6", async () => {
+cron.schedule(Mora_60, async () => {
   const hoy = new Date();
 
   // Verificar si hoy es un día festivo en Colombia
@@ -271,21 +260,7 @@ cron.schedule("30,35 11 * * 1,4,6", async () => {
 });
 
 // Tareas directas a las URL  recordar 90 dias en mora
-// cron.schedule("30,36 13 * * 1,4,6", async () => {
-//   console.log("Iniciando tareas  recordar mora 90");
-
-//   const fakeReq = {} as express.Request;
-//   const fakeRes = {
-//     status: (statusCode) => ({ json: (data) => console.log(data) }),
-//   } as express.Response;
-
-//   await TareasProgramadasMoraTercero(fakeReq, fakeRes);
-
-//   console.log("finalizado tareas recordar mora 90");
-// });
-
-// Tareas directas a las URL  recordar 90 dias en mora
-cron.schedule("30,36 13 * * 1,4,6", async () => {
+cron.schedule(Mora_90, async () => {
   const hoy = new Date();
 
   // Verificar si hoy es un día festivo en Colombia
@@ -308,22 +283,8 @@ cron.schedule("30,36 13 * * 1,4,6", async () => {
 });
 
 // Tareas directas a las URL  recordar 150 dias en mora
-// cron.schedule("30,41 13 * * 1", async () => {
-//   console.log("Iniciando tareas  recordar mora 150");
 
-//   const fakeReq = {} as express.Request;
-//   const fakeRes = {
-//     status: (statusCode) => ({ json: (data) => console.log(data) }),
-//   } as express.Response;
-
-//   await TareasProgramadasMoraCuatro(fakeReq, fakeRes);
-
-//   console.log("finalizado tareas recordar mora 150");
-// });
-
-// Tareas directas a las URL  recordar 150 dias en mora
-
-cron.schedule("30,41 13 * * 1", async () => {
+cron.schedule(Mora_150, async () => {
   const hoy = new Date();
 
   // Verificar si hoy es un día festivo en Colombia
@@ -347,7 +308,7 @@ cron.schedule("30,41 13 * * 1", async () => {
 
 
 // // Nuevo saldo de listado de cobro
-cron.schedule("8 * * * 1,4", async () => {
+cron.schedule(Lista_cobranza2, async () => {
   console.log("Iniciando lista de cobranza");
 
   const fakeReq = {} as express.Request;
@@ -361,7 +322,7 @@ cron.schedule("8 * * * 1,4", async () => {
 });
 
 // Actualizar o sincronizar base de datos GOLDRA
-cron.schedule("2 * * * *", async () => {
+cron.schedule(mysql_GOLDRA, async () => {
   console.log("sincronizar MYSQL GOLDRA");
 
   const fakeReq = {} as express.Request;
@@ -375,7 +336,7 @@ cron.schedule("2 * * * *", async () => {
 });
 
 // Actualizar o sincronizar base de datos SOLUCREDITO
-cron.schedule("25 * * * *", async () => {
+cron.schedule(mysql_SOLUCREDITO, async () => {
   console.log("sincronizar MYSQL SOLUCREDITO");
 
   const fakeReq = {} as express.Request;
