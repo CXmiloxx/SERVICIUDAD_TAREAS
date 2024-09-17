@@ -1100,7 +1100,7 @@ export const sincronizarMysqlGOLDRA = async (
   try {
     // Conexión al servidor de origen
     sourceConnection = await mysql.createConnection({
-      host: '192.168.1.150',
+      host: '201.236.243.161',
       user: 'MICHEL_SERVER',
       password: 'Michel137909*',
       database: 'GOLDRA_LICANCE'
@@ -1108,7 +1108,7 @@ export const sincronizarMysqlGOLDRA = async (
 
     // Conexión al servidor de destino
     targetConnection = await mysql.createConnection({
-      host: '192.168.1.202',
+      host: '186.87.165.129',
       user: 'MICHEL_SERVER',
       password: 'Michel137909**',
       database: 'GOLDRA_LICANCE'
@@ -1170,14 +1170,14 @@ export const sincronizarMysqlSOLUCREDITO = async (
   req: Request,
   res: Response
 ): Promise<void> => {
-  const tareas = "sincronizar docuemtnos SOLUCREDITO";
-  const tareaInsertada = await validarEInsertarTarea(tareas);
-  const { fecha, hora } = obtenerFechaHoraBogota();
+  const tareas = "sincronizar MYSQL SOLUCREDITO";
+  // const tareaInsertada = await validarEInsertarTarea(tareas);
+  // const { fecha, hora } = obtenerFechaHoraBogota();
 
-  if (!tareaInsertada) {
-    console.log("Ya existe un registro en:", tareas, fecha, hora);
-    return; // Detener la ejecución si la tarea ya existe
-  }
+  // if (!tareaInsertada) {
+  //   console.log("Ya existe un registro en:", tareas, fecha, hora);
+  //   return; // Detener la ejecución si la tarea ya existe
+  // }
 
   let sourceConnection: mysql.Connection | null = null;
   let targetConnection: mysql.Connection | null = null;
@@ -1193,7 +1193,7 @@ export const sincronizarMysqlSOLUCREDITO = async (
 
     // Conexión al servidor de destino
     targetConnection = await mysql.createConnection({
-      host: '192.168.1.202',
+      host: '186.87.165.129',
       user: 'MICHEL_SERVER',
       password: 'Michel137909**',
       database: 'SOLUCREDITO'
@@ -1221,7 +1221,7 @@ export const sincronizarMysqlSOLUCREDITO = async (
       'comentarios',
       'saldo_anterior',
       'saldo_anterior_proveedor',
-      'archivo_migra',
+      // 'archivo_migra',
       'cifin',
       'confirmar_codigo',
       'estudios_realizados',
@@ -1239,7 +1239,10 @@ export const sincronizarMysqlSOLUCREDITO = async (
       'mi_ruta',
       'pagos_payvalida',
       'tareasprogramadas',
-      'transferencias'
+      'transferencias',
+      'codeudor',
+      "detalle_transferencia"
+
     ];
 
     // Copiar datos de las tablas con claves foráneas
@@ -1284,29 +1287,29 @@ export const sincronizarMysqlSOLUCREDITO = async (
     const remainingTables = allTableNames.filter(tableName => !orderedTables.includes(tableName));
 
     // Copiar datos de las tablas restantes
-    for (const tableName of remainingTables) {
-      console.log(`Iniciando sincronización para la tabla sin claves foráneas ${tableName}...`);
-      try {
-        const [rows] = await sourceConnection.query(`SELECT * FROM ${tableName}`) as [mysql.RowDataPacket[], mysql.FieldPacket[]];
-        if (rows.length === 0) {
-          console.log(`Tabla ${tableName} está vacía. Saltando...`);
-          continue;
-        }
+    // for (const tableName of remainingTables) {
+    //   console.log(`Iniciando sincronización para la tabla sin claves foráneas ${tableName}...`);
+    //   try {
+    //     const [rows] = await sourceConnection.query(`SELECT * FROM ${tableName}`) as [mysql.RowDataPacket[], mysql.FieldPacket[]];
+    //     if (rows.length === 0) {
+    //       console.log(`Tabla ${tableName} está vacía. Saltando...`);
+    //       continue;
+    //     }
 
-        const columns = Object.keys(rows[0]).join(', ');
-        const valuesPlaceholders = Object.keys(rows[0]).map(() => '?').join(', ');
-        const updateSet = Object.keys(rows[0]).map(key => `${key} = VALUES(${key})`).join(', ');
+    //     const columns = Object.keys(rows[0]).join(', ');
+    //     const valuesPlaceholders = Object.keys(rows[0]).map(() => '?').join(', ');
+    //     const updateSet = Object.keys(rows[0]).map(key => `${key} = VALUES(${key})`).join(', ');
 
-        const insertQuery = `INSERT INTO ${tableName} (${columns}) VALUES (${valuesPlaceholders}) ON DUPLICATE KEY UPDATE ${updateSet}`;
+    //     const insertQuery = `INSERT INTO ${tableName} (${columns}) VALUES (${valuesPlaceholders}) ON DUPLICATE KEY UPDATE ${updateSet}`;
 
-        for (const row of rows) {
-          await targetConnection.query(insertQuery, Object.values(row));
-        }
-        console.log(`Tabla ${tableName} sincronizada con éxito.`);
-      } catch (err) {
-        console.error(`Error al copiar datos en la tabla ${tableName}: ${err.message}`);
-      }
-    }
+    //     for (const row of rows) {
+    //       await targetConnection.query(insertQuery, Object.values(row));
+    //     }
+    //     console.log(`Tabla ${tableName} sincronizada con éxito.`);
+    //   } catch (err) {
+    //     console.error(`Error al copiar datos en la tabla ${tableName}: ${err.message}`);
+    //   }
+    // }
 
     // Confirmar la transacción
     await targetConnection.commit();
