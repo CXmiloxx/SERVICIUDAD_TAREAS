@@ -1185,7 +1185,7 @@ export const sincronizarMysqlSOLUCREDITO = async (
   try {
     // Conexión al servidor de origen
     sourceConnection = await mysql.createConnection({
-      host: '192.168.1.150',
+      host: '201.236.243.161',
       user: 'MICHEL_SERVER',
       password: 'Michel137909*',
       database: 'SOLUCREDITO'
