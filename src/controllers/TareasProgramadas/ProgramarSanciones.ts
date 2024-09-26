@@ -1,6 +1,6 @@
 // tareasProgramadas.ts
 
-import { Request, Response } from "express"; // Asegúrate de importar Request y Response si aún no lo has hecho
+import { Request, Response, Router } from "express"; // Asegúrate de importar Request y Response si aún no lo has hecho
 import { pool } from "../../db";
 import { RowDataPacket } from "mysql2";
 import axios from "axios";
@@ -1336,6 +1336,126 @@ export const sincronizarMysqlSOLUCREDITO = async (
     }
   }
 };
+
+//  si el cliente tiene mas de 90 dias en mora se suspende cupo de credito
+export const SuspenderCupo = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  const tareas = "Mora de 90 suspender cupo";
+  const tareaInsertada = await validarEInsertarTarea(tareas);
+  const { fecha, hora } = obtenerFechaHoraBogota();
+
+  if (!tareaInsertada) {
+    console.log("Ya existe un registro en:", tareas, fecha, hora);
+    return
+  }
+
+  try {
+    // Consulta SQL para obtener todos los documentos de user_cliente
+    const documentosQuery = `
+      SELECT documento 
+      FROM user_cliente
+    `;
+
+    console.log("Ejecutando consulta para obtener documentos...");
+    const [documentosResults] = await pool.query<RowDataPacket[]>(documentosQuery);
+
+    if (documentosResults.length === 0) {
+      console.log("No se encontraron documentos en la base de datos.");
+      res.status(200).json({ message: "No hay documentos para validar." });
+      return;
+    }
+
+    const morasMayores90 = [];
+    const documentosConMora = new Set(); // Usamos un Set para rastrear documentos únicos
+
+    for (const { documento } of documentosResults) {
+      // Primero, verificamos si existe en estudios_realizados y si el cupo es mayor a 0
+      const estudiosQuery = `
+        SELECT cupo 
+        FROM estudios_realizados 
+        WHERE documento = ? AND cupo > 0
+      `;
+
+      const [estudiosResults] = await pool.query<RowDataPacket[]>(estudiosQuery, [documento]);
+
+      if (estudiosResults.length > 0) {
+        const { cupo } = estudiosResults[0];
+
+        // Ahora validamos la mora en la tabla amortizacion
+        const amortizacionQuery = `
+          SELECT 
+            u.documento,
+            a.total_cuota,
+            a.fecha_pago,
+            DATEDIFF(CURRENT_DATE, a.fecha_pago) AS dias_vencidos
+          FROM 
+            amortizacion a
+          INNER JOIN 
+            user_cliente u ON a.documento = u.documento
+          WHERE 
+            u.documento = ? AND 
+            a.total_cuota > 0
+        `;
+
+        const [results] = await pool.query<RowDataPacket[]>(amortizacionQuery, [documento]);
+        
+        // Filtrar solo los que tienen días vencidos mayores a 90
+        const morasDocumento = results.filter(result => result.dias_vencidos > 90);
+
+        if (morasDocumento.length > 0 && !documentosConMora.has(documento)) {
+          // Añadimos el documento al Set para evitar duplicados
+          documentosConMora.add(documento);
+
+          // Solo mostramos el primer resultado que cumple la condición
+          const { total_cuota, dias_vencidos } = morasDocumento[0];
+          console.log(`Cédula: ${documento}, Cupo: ${cupo}, Total Cuota: ${total_cuota}, Días Vencidos: ${dias_vencidos}`);
+
+                    // Actualizar el cupo a 0 en la tabla estudios_realizados
+          const updateQuery = `
+            UPDATE estudios_realizados
+            SET cupo = 0
+            WHERE documento = ?
+          `;
+          await pool.query(updateQuery, [documento]);
+
+
+  // Insertar un nuevo comentario en la tabla comentarios
+  const insertComentarioQuery = `
+    INSERT INTO comentarios (documento, comentario, tipo, creador, fecha_registro)
+    VALUES (?, ?, ?, ?, NOW())
+  `;
+          
+    const comentario = "SE SUSPENDE CUPO DE CRÉDITO POR MORA MAYOR A 90 DÍAS.";
+  const tipo = "SUSPENDER";
+  const creador = "SISTEMA PROGRAMADO"
+
+    await pool.query(insertComentarioQuery, [documento, comentario, tipo, creador]);
+  
+          // Agregamos solo un registro por cédula al array de moras
+          morasMayores90.push({
+            documento,
+            cupo,
+            total_cuota,
+            dias_vencidos,
+          });
+        }
+      }
+    }
+
+    if (morasMayores90.length > 0) {
+      res.status(200).json({ message: "Cupos suspendidos por mora.", moras: morasMayores90 });
+    } else {
+      res.status(200).json({ message: "No se encontraron moras mayores a 90 días." });
+    }
+  } catch (error) {
+    console.error("Error en la solicitud:", error);
+    res.status(500).json({ error: "Error en la solicitud" });
+  }
+};
+
+
 
 
 const obtenerFechaHoraBogota = (): { fecha: string; hora: string } => {

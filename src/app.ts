@@ -25,6 +25,7 @@ import {
   listadoCobranzaActualizar,
   sincronizarMysqlGOLDRA,
   sincronizarMysqlSOLUCREDITO,
+  SuspenderCupo,
 } from "./controllers/TareasProgramadas/ProgramarSanciones.js";
 
 const app = express();
@@ -87,6 +88,7 @@ const Mora_150 = process.env.Mora_150 || '30,41 13 * * 1';
 const Lista_cobranza2 = process.env.Lista_cobranza2 || '8 * * * 1,4';
 const mysql_GOLDRA = process.env.mysql_GOLDRA || '30,41 13 * * 1';
 const mysql_SOLUCREDITO = process.env.mysql_SOLUCREDITO || '30,41 13 * * 1';
+const suspenderCupo = process.env.suspenderCupo || '53 * * * *';
 
 
 // *******Primer tiro
@@ -345,6 +347,21 @@ cron.schedule(mysql_SOLUCREDITO, async () => {
   } as express.Response;
 
   await sincronizarMysqlSOLUCREDITO(fakeReq, fakeRes);
+
+  console.log("finalizado sincronizar MYSQL SOLUCREDITO");
+});
+
+
+// Suspender cupo de credito si tiene mas de 90 dias en mora
+cron.schedule(suspenderCupo, async () => {
+  console.log("suspende cupo de credito mora > 90");
+
+  const fakeReq = {} as express.Request;
+  const fakeRes = {
+    status: (statusCode) => ({ json: (data) => console.log(data) }),
+  } as express.Response;
+
+  await SuspenderCupo(fakeReq, fakeRes);
 
   console.log("finalizado sincronizar MYSQL SOLUCREDITO");
 });
