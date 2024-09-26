@@ -10,6 +10,7 @@ import mysql from "mysql2/promise";
 
 
 
+
 const apiURL_notificar = NOTIFICATION_API;
 
 const apiURL_server = API_SERVER;
@@ -1455,8 +1456,31 @@ export const SuspenderCupo = async (
   }
 };
 
+//  tarea para programar cierre de mes CIFIN 
 
 
+export const ListadoCifin = async (req: Request, res: Response): Promise<void> => {
+  const tareas = "Listado CIFIN";
+  const tareaInsertada = await validarEInsertarTarea(tareas);
+  const { fecha, hora } = obtenerFechaHoraBogota();
+
+  // Comprobar si la tarea ya existe
+  if (!tareaInsertada) {
+    console.log("Ya existe un registro en:", tareas, fecha, hora);
+    return; // Terminar la función si la tarea ya existe
+  }
+
+  try {
+    // Realizar la solicitud GET a la URL especificada
+    const response = await axios.get(`${apiURL_panel}/api/reporte/generar/reporte/cifin`);
+
+    // Enviar la respuesta recibida al cliente
+    res.status(200).json(response.data);
+  } catch (error) {
+    console.error("Error en la solicitud:", error);
+    res.status(500).json({ error: "Error en la solicitud" });
+  }
+};
 
 const obtenerFechaHoraBogota = (): { fecha: string; hora: string } => {
   // Obtener la fecha y hora actual en la zona horaria de Bogotá
