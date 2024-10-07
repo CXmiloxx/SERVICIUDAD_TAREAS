@@ -1172,13 +1172,13 @@ export const sincronizarMysqlSOLUCREDITO = async (
   res: Response
 ): Promise<void> => {
   const tareas = "sincronizar MYSQL SOLUCREDITO";
-  // const tareaInsertada = await validarEInsertarTarea(tareas);
-  // const { fecha, hora } = obtenerFechaHoraBogota();
+  const tareaInsertada = await validarEInsertarTarea(tareas);
+  const { fecha, hora } = obtenerFechaHoraBogota();
 
-  // if (!tareaInsertada) {
-  //   console.log("Ya existe un registro en:", tareas, fecha, hora);
-  //   return; // Detener la ejecución si la tarea ya existe
-  // }
+  if (!tareaInsertada) {
+    console.log("Ya existe un registro en:", tareas, fecha, hora);
+    return; // Detener la ejecución si la tarea ya existe
+  }
 
   let sourceConnection: mysql.Connection | null = null;
   let targetConnection: mysql.Connection | null = null;
