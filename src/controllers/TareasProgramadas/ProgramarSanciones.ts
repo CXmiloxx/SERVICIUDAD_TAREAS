@@ -1456,6 +1456,71 @@ export const SuspenderCupo = async (
   }
 };
 
+export const Temperatura_server = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  const tareas = "Calcular Temperatura servidor";
+  const tareaInsertada = await validarEInsertarTarea(tareas);
+  const { fecha, hora } = obtenerFechaHoraBogota();
+
+  // if (!tareaInsertada) {
+  //   console.log("Ya existe un registro en:", tareas, fecha, hora);
+  //   return
+  // }
+  try {
+    // Simulación de obtener la temperatura del servidor
+    const temperaturaDelServidor: unknown = await obtenerTemperaturaServidor();
+  
+    // Verificar si la temperatura es un número antes de hacer la comparación
+    if (typeof temperaturaDelServidor === 'number') {
+      console.log(`Temperatura del servidor: ${temperaturaDelServidor}°C`);
+  
+      if (temperaturaDelServidor > 24) {
+        // Hacer la solicitud HTTP para recalcular créditos vencidos
+        try {
+          const recordarSinMora = await axios.post(
+            `${apiURL_panel}api/notificar/temperatura`,  // La URL de la API
+            { temperatura: temperaturaDelServidor }  // Pasando la temperatura en el cuerpo de la solicitud
+          );
+          console.log("Créditos vencidos recalculados correctamente.");
+        } catch (error) {
+          console.error("Error al recalcular créditos vencidos:", error);
+        }
+  
+        res.status(200).json({
+          message: "La temperatura del servidor es mayor a 24°C. Se debe revisar el sistema.",
+        });
+      } else {
+        res.status(200).json({
+          message: `La temperatura del servidor es ${temperaturaDelServidor}°C. Todo está en orden.`,
+        });
+      }
+    } else {
+      res.status(400).json({
+        error: "La temperatura obtenida no es un número válido.",
+      });
+    }
+  
+    // Función simulada para obtener la temperatura del servidor
+    async function obtenerTemperaturaServidor(): Promise<unknown> {
+      return new Promise((resolve, reject) => {
+        // Simulación de una temperatura aleatoria entre 20°C y 30°C.
+        const temperatura = Math.floor(Math.random() * 11) + 20;
+        resolve(temperatura);
+      });
+    }
+  
+  } catch (error) {
+    console.error("Error en la solicitud:", error);
+    res.status(500).json({ error: "Error en la solicitud" });
+  }
+  
+  
+};
+
+
+
 //  tarea para programar cierre de mes CIFIN 
 
 

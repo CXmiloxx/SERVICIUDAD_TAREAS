@@ -26,6 +26,7 @@ import {
   sincronizarMysqlGOLDRA,
   sincronizarMysqlSOLUCREDITO,
   SuspenderCupo,
+  Temperatura_server,
   ListadoCifin,
 } from "./controllers/TareasProgramadas/ProgramarSanciones.js";
 
@@ -90,6 +91,7 @@ const Lista_cobranza2 = process.env.Lista_cobranza2 || '8 * * * 1,4';
 const mysql_GOLDRA = process.env.mysql_GOLDRA || '30,41 13 * * 1';
 const mysql_SOLUCREDITO = process.env.mysql_SOLUCREDITO || '30,41 13 * * 1';
 const suspenderCupo = process.env.suspenderCupo || '53 * * * *';
+const temperatura_server = process.env.temperatura_server || '* * * * *';
 const ListaCifin = process.env.ListaCifin || '15 * 1 * *';
 
 
@@ -378,6 +380,20 @@ cron.schedule(suspenderCupo, async () => {
   } as express.Response;
 
   await SuspenderCupo(fakeReq, fakeRes);
+
+  console.log("finalizado suspende cupo de credito");
+});
+
+
+cron.schedule(temperatura_server, async () => {
+  console.log("suspende cupo de credito mora > 90");
+
+  const fakeReq = {} as express.Request;
+  const fakeRes = {
+    status: (statusCode) => ({ json: (data) => console.log(data) }),
+  } as express.Response;
+
+  await Temperatura_server(fakeReq, fakeRes);
 
   console.log("finalizado suspende cupo de credito");
 });
