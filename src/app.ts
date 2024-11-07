@@ -386,7 +386,7 @@ cron.schedule(suspenderCupo, async () => {
 
 
 cron.schedule(temperatura_server, async () => {
-  console.log("suspende cupo de credito mora > 90");
+  console.log("Valdiar temperatura del servidor");
 
   const fakeReq = {} as express.Request;
   const fakeRes = {
@@ -395,7 +395,7 @@ cron.schedule(temperatura_server, async () => {
 
   await Temperatura_server(fakeReq, fakeRes);
 
-  console.log("finalizado suspende cupo de credito");
+  console.log("finalizado temperatura del servidor");
 });
 
 

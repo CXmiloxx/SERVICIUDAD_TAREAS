@@ -1476,11 +1476,11 @@ export const Temperatura_server = async (
     if (typeof temperaturaDelServidor === 'number') {
       console.log(`Temperatura del servidor: ${temperaturaDelServidor}°C`);
   
-      if (temperaturaDelServidor > 24) {
+      if (temperaturaDelServidor > 40) {
         // Hacer la solicitud HTTP para recalcular créditos vencidos
         try {
           const recordarSinMora = await axios.post(
-            `${apiURL_panel}api/notificar/temperatura`,  // La URL de la API
+            `${apiURL_panel}/api/notificar/temperatura`,  // La URL de la API
             { temperatura: temperaturaDelServidor }  // Pasando la temperatura en el cuerpo de la solicitud
           );
           console.log("Créditos vencidos recalculados correctamente.");
