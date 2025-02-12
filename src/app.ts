@@ -52,14 +52,15 @@ app.use(
 
       "http://localhost:5173",
       "http://localhost:3070",
-      "https://pago.solucredito.com.co",
+      "https://pago.finova.com.co",
       "https://app.goldraea.com",
-      "https://app.solucredito.com.co",
-      "https://demo.solucredito.com.co",
-      "https://server.solucredito.com.co",
-      "https://admin.solucredito.com.co",
-      "https://apps.solucredito.com.co",
-      "https://tareas.solucredito.com.co",
+      "https://app.finova.com.co",
+      "https://demo.finova.com.co",
+      "https://server.finova.com.co",
+      "https://admin.finova.com.co",
+      "https://app.finova.com.co",
+      "https://tareas.finova.com.co",
+    "https://apps.solucredito.com.co",
     ],
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
     credentials: true,
@@ -343,7 +344,7 @@ cron.schedule(mysql_GOLDRA, async () => {
 
 // Actualizar o sincronizar base de datos SOLUCREDITO
 cron.schedule(mysql_SOLUCREDITO, async () => {
-  console.log("sincronizar MYSQL SOLUCREDITO");
+  console.log("sincronizar MYSQL FINOVA");
 
   const fakeReq = {} as express.Request;
   const fakeRes = {
@@ -352,7 +353,7 @@ cron.schedule(mysql_SOLUCREDITO, async () => {
 
   await sincronizarMysqlSOLUCREDITO(fakeReq, fakeRes);
 
-  console.log("finalizado sincronizar MYSQL SOLUCREDITO");
+  console.log("finalizado sincronizar MYSQL finova");
 });
 
 // Actualizar listado de CIFIN

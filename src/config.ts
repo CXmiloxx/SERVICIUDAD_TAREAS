@@ -13,13 +13,13 @@ export const DATABASE = process.env.DATABASE || "demo";
 // conectar local y produccion
 
 export const API_SERVER =
-  process.env.API_SERVER || "https://server.solucredito.com.co";
+  process.env.API_SERVER || "https://server.finova.com.co";
 
 export const NOTIFICATION_API =
-  process.env.NOTIFICATION_API || "https://notificar.solucredito.com.co";
+  process.env.NOTIFICATION_API || "https://notificar.finova.com.co";
 
 export const ADIN_API =
-  process.env.ADIN_API || "https://panel.solucredito.com.co";
+  process.env.ADIN_API || "https://panel.finova.com.co";
 
 
   export const SERVIDOR = process.env.SERVIDOR || "SIN.ENV";

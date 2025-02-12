@@ -935,7 +935,7 @@ export const TareasProgramadasServidor = async (
     const fechaActual = new Date();
 
     const celular = 3105399184;
-    const codigoMensaje = `Tareas completadas😁  SOLUCREDITO  ${fechaActual}`;
+    const codigoMensaje = `Tareas completadas😁  FINOVA  ${fechaActual}`;
 
     // Enviar mensaje de texto
     await axios.post(`${apiURL_notificar}/notificarViaSMS`, {
@@ -1171,7 +1171,7 @@ export const sincronizarMysqlSOLUCREDITO = async (
   req: Request,
   res: Response
 ): Promise<void> => {
-  const tareas = "sincronizar MYSQL SOLUCREDITO";
+  const tareas = "sincronizar MYSQL FINOVA";
   const tareaInsertada = await validarEInsertarTarea(tareas);
   const { fecha, hora } = obtenerFechaHoraBogota();
 
@@ -1189,7 +1189,7 @@ export const sincronizarMysqlSOLUCREDITO = async (
       host: '201.236.243.161',
       user: 'MICHEL_SERVER',
       password: 'Michel137909*',
-      database: 'SOLUCREDITO'
+      database: 'SOLUCREDITFINOVA'
     });
 
     // Conexión al servidor de destino
@@ -1197,7 +1197,7 @@ export const sincronizarMysqlSOLUCREDITO = async (
       host: '186.87.165.129',
       user: 'MICHEL_SERVER',
       password: 'Michel137909**',
-      database: 'SOLUCREDITO'
+      database: 'SOLUCREDITFINOVA'
     });
 
     // Iniciar la transacción en el servidor de destino
