@@ -18,7 +18,7 @@ import {
   ListaCobranza,
   TareasProgramadasServidor,
   TareasProgramadasSinMora,
-  TareasProgramadasMoraPrimera,
+  TareasProgramadasMoraPrimera, 
   TareasProgramadasMoraSegundo,
   TareasProgramadasMoraTercero,
   TareasProgramadasMoraCuatro,
