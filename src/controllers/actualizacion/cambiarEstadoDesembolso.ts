@@ -1,9 +1,9 @@
 import {Request, Response} from "express";
 import {pool} from "../../db";
 import axios from "axios";
-import {ADIN_API} from "../../config";
+import {ADMIN_API} from "../../config";
 
-const apiURL_panel = ADIN_API;
+const apiURL_panel = ADMIN_API;
 
 export const cambiarEstadoDesembolso = async (
     req: Request,

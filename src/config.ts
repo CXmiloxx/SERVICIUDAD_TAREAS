@@ -18,8 +18,8 @@ export const API_SERVER =
 export const NOTIFICATION_API =
   process.env.NOTIFICATION_API || "https://notificar.finova.com.co";
 
-export const ADIN_API =
-  process.env.ADIN_API || "https://panel.finova.com.co";
+export const ADMIN_API =
+  process.env.ADMIN_API || "https://panel.finova.com.co";
 
 
   export const SERVIDOR = process.env.SERVIDOR || "SIN.ENV";

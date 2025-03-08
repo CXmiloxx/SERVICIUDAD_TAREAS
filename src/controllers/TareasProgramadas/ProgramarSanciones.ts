@@ -4,7 +4,7 @@ import { Request, Response, Router } from "express"; // Asegúrate de importar R
 import { pool } from "../../db";
 import { RowDataPacket } from "mysql2";
 import axios from "axios";
-import { NOTIFICATION_API, API_SERVER, ADIN_API } from "../../config";
+import { NOTIFICATION_API, API_SERVER, ADMIN_API } from "../../config";
 import moment from "moment-timezone";
 import mysql from "mysql2/promise";
 
@@ -15,7 +15,7 @@ const apiURL_notificar = NOTIFICATION_API;
 
 const apiURL_server = API_SERVER;
 
-const apiURL_panel = ADIN_API;
+const apiURL_panel = ADMIN_API;
 
 // Proceso de actualización de pago en amortizador y historial
 export const CalcularSanciones = async (

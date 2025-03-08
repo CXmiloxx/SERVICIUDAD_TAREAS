@@ -7,11 +7,11 @@ import * as path from "path";
 import * as fs from "fs/promises";
 import { promises as fsPromises } from "fs";
 import axios from "axios";
-import { API_SERVER, ADIN_API } from "../config";
+import { API_SERVER, ADMIN_API } from "../config";
 
 const apiURL_server = API_SERVER;
 
-const apiURL_panel = ADIN_API;
+const apiURL_panel = ADMIN_API;
 
 // Proceso de actualización de pago en amortizador y historial
 export const CalcularSanciones = async (
