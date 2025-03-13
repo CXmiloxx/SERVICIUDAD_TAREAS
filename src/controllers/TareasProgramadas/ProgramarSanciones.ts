@@ -65,7 +65,7 @@ export const EliminarPesos = async (
     if (Array.isArray(rows)) {
       if (rows.length > 0) {
         // Si hay resultados, iteramos sobre las filas
-        // console.log("Resultados de la consulta:", rows);
+        console.log("Resultados de la consulta:", rows);
 
         // Preparar y enviar la solicitud POST para cada resultado
         for (const row of rows) {
