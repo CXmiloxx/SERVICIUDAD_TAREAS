@@ -30,6 +30,7 @@ import {
   ListadoCifin,
   EliminarPesos,
   Desembolsos,
+  MaximosIntentosCodigo,
 } from "./controllers/TareasProgramadas/ProgramarSanciones.js";
 
 const app = express();
@@ -99,6 +100,7 @@ const ListaCifin = process.env.ListaCifin || '15 * 1 * *';
 
 const EliminarPeso = process.env.EliminarPeso || '22 * * * *';
 const DesembolsoPendiente = process.env.DesembolsoPendiente || '22 * * * *';
+const codigoValidar = process.env.codigoValidar || '22 * * * *';
 // *******Primer tiro
 
 
@@ -131,6 +133,19 @@ cron.schedule(DesembolsoPendiente, async () => {
   console.log("Tarea de finalizado...  insertar desembolsos");
 });
 
+//   Aumentar intentos permitidos
+cron.schedule(codigoValidar, async () => {
+  console.log("Iniciando tarea de insertar maximos intentos permitidos");
+
+  const fakeReq = {} as express.Request; // Puedes personalizar esto según tus necesidades
+  const fakeRes = {
+    status: (statusCode) => ({ json: (data) => console.log(data) }),
+  } as express.Response;
+
+  await MaximosIntentosCodigo(fakeReq, fakeRes);
+
+  console.log("Tarea de finalizado...  insertar maximos intentos pemitidos");
+});
 
 
 // Calcular interes de creditos vencidos de amortizacion

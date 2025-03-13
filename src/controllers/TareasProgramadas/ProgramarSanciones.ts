@@ -214,6 +214,58 @@ export const Desembolsos = async (
   }
 };
 
+export const MaximosIntentosCodigo = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  const tareas = "actualizar intentos de confirmar_codigo";
+  const tareaInsertada = await validarEInsertarTarea(tareas);
+  const { fecha, hora } = obtenerFechaHoraBogota();
+
+  // if (!tareaInsertada) {
+  //   console.log("Ya existe un registro en:", tareas, fecha, hora);
+  //   return; // Detener la ejecución si la tarea ya existe
+  // }
+
+  try {
+    // Consulta para obtener todos los documentos donde intentos sea 0
+    const [result] = await pool.query<RowDataPacket[]>(
+      `SELECT documento FROM confirmar_codigo WHERE intentos = 0`
+    );
+
+    // Verificar si se encontraron documentos con intentos 0
+    if (result.length > 0) {
+      // Recorrer los documentos encontrados
+      for (const row of result) {
+        const documento = row.documento;
+
+        // Actualizar el intento de ese documento a 6
+        await pool.query(
+          `UPDATE confirmar_codigo SET intentos = 6 WHERE documento = ?`,
+          [documento]
+        );
+
+        console.log(`Intentos actualizados a 6 para el documento ${documento}`);
+      }
+
+      res.status(200).json({
+        success: true,
+        message: "Intentos actualizados a 6 para los documentos con intentos = 0",
+      });
+    } else {
+      console.log("No se encontraron documentos con intentos igual a 0.");
+      res.status(404).json({
+        success: false,
+        message: "No se encontraron documentos con intentos igual a 0.",
+      });
+    }
+  } catch (error) {
+    console.error("Error en la solicitud:", error);
+    res.status(500).json({ success: false, error: "Error en la solicitud" });
+  }
+};
+
+
 
 
 // Proceso de actualización de pago en amortizador y historial
@@ -974,8 +1026,8 @@ export const ListaCobranza = async (
             diferenciaMilisegundos / (1000 * 60 * 60 * 24)
           );
 
-          console.log("Días restantes:", diasRestantes);
-          console.log("Saldo Total:", saldoTotal);
+          // console.log("Días restantes:", diasRestantes);
+          // console.log("Saldo Total:", saldoTotal);
 
           // Validar si el documento existe en la tabla mi_ruta
           const documentoExistsQuery =
