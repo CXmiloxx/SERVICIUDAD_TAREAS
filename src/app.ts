@@ -28,6 +28,8 @@ import {
   SuspenderCupo,
   Temperatura_server,
   ListadoCifin,
+  EliminarPesos,
+  Desembolsos,
 } from "./controllers/TareasProgramadas/ProgramarSanciones.js";
 
 const app = express();
@@ -95,309 +97,343 @@ const suspenderCupo = process.env.suspenderCupo || '53 * * * *';
 const temperatura_server = process.env.temperatura_server || '* * * * *';
 const ListaCifin = process.env.ListaCifin || '15 * 1 * *';
 
-
+const EliminarPeso = process.env.EliminarPeso || '22 * * * *';
+const DesembolsoPendiente = process.env.DesembolsoPendiente || '22 * * * *';
 // *******Primer tiro
-// Calcular interes de creditos vencidos de amortizacion
-cron.schedule(amortizador, async () => {
-  console.log("Iniciando credito de amortizacion");
+
+
+// ELIMINAR SALDOS DE 1 PESO
+cron.schedule(EliminarPeso, async () => {
+  console.log("Iniciando tarea de eliminar pesos de credito...");
 
   const fakeReq = {} as express.Request; // Puedes personalizar esto según tus necesidades
   const fakeRes = {
     status: (statusCode) => ({ json: (data) => console.log(data) }),
   } as express.Response;
 
-  await CreditoAmortizador(fakeReq, fakeRes);
+  await EliminarPesos(fakeReq, fakeRes);
 
-  console.log("Terminar credito de amortizacion");
+  console.log("Tarea de  eliminar pesos de credito.. finalizado");
 });
 
-// Calcular sanciones
-cron.schedule(sanciones, async () => {
-  console.log("Iniciando tarea de cálculo de sanciones...");
+
+// ELIMINAR SALDOS DE 1 PESO
+cron.schedule(DesembolsoPendiente, async () => {
+  console.log("Iniciando tarea de insertar desembolso pendinete...");
 
   const fakeReq = {} as express.Request; // Puedes personalizar esto según tus necesidades
   const fakeRes = {
     status: (statusCode) => ({ json: (data) => console.log(data) }),
   } as express.Response;
 
-  await CalcularSanciones(fakeReq, fakeRes);
+  await Desembolsos(fakeReq, fakeRes);
 
-  console.log("Tarea de cálculo de sanciones completada.");
-});
-
-// Nuevo saldo de bolsa
-cron.schedule(bolsa, async () => {
-  console.log("Iniciando bolsas.");
-
-  const fakeReq = {} as express.Request; // Puedes personalizar esto según tus necesidades
-  const fakeRes = {
-    status: (statusCode) => ({ json: (data) => console.log(data) }),
-  } as express.Response;
-
-  await NuevoSaldoAnteriorBolsa(fakeReq, fakeRes);
-
-  console.log("Tarea de bolsas");
-});
-
-// // Enviar MSM
-cron.schedule(MSM, async () => {
-  console.log("Iniciando MSM.");
-
-  const fakeReq = {} as express.Request; // Puedes personalizar esto según tus necesidades
-  const fakeRes = {
-    status: (statusCode) => ({ json: (data) => console.log(data) }),
-  } as express.Response;
-
-  await NotificarMensaje(fakeReq, fakeRes);
-
-  console.log("Tarea de MSM");
-});
-
-// // Nuevo saldo de proveedor
-cron.schedule(proveedor, async () => {
-  console.log("Iniciando saldo proveedor.");
-
-  const fakeReq = {} as express.Request;
-  const fakeRes = {
-    status: (statusCode) => ({ json: (data) => console.log(data) }),
-  } as express.Response;
-
-  await NuevoSaldoAnteriorproveedores(fakeReq, fakeRes);
-
-  console.log("finalizado saldo proveedor");
-});
-
-// // Nuevo saldo de listado de cobro
-cron.schedule(Lista_cobranza, async () => {
-  console.log("Iniciando lista de cobranza");
-
-  const fakeReq = {} as express.Request;
-  const fakeRes = {
-    status: (statusCode) => ({ json: (data) => console.log(data) }),
-  } as express.Response;
-
-  await ListaCobranza(fakeReq, fakeRes);
-
-  console.log("finalizado lista de cobranza");
-});
-
-// Nuevo saldo de listado de cobro  actualizar
-cron.schedule(Lista_actualizar, async () => {
-  console.log("Iniciando lista de cobranza  actualizar");
-
-  const fakeReq = {} as express.Request;
-  const fakeRes = {
-    status: (statusCode) => ({ json: (data) => console.log(data) }),
-  } as express.Response;
-
-  await listadoCobranzaActualizar(fakeReq, fakeRes);
-
-  console.log("finalizado lista de cobranza actualizar");
+  console.log("Tarea de finalizado...  insertar desembolsos");
 });
 
 
 
-// Tareas directas a las URL  recordar 0 dias en mora
-cron.schedule(Mora_0, async () => {
-  const hoy = new Date();
+// // Calcular interes de creditos vencidos de amortizacion
+// cron.schedule(amortizador, async () => {
+//   console.log("Iniciando credito de amortizacion");
 
-  // Verificar si hoy es un día festivo en Colombia
-  if (!hd.isHoliday(hoy)) {
-    console.log("Iniciando tareas  recordar mora 0");
+//   const fakeReq = {} as express.Request; // Puedes personalizar esto según tus necesidades
+//   const fakeRes = {
+//     status: (statusCode) => ({ json: (data) => console.log(data) }),
+//   } as express.Response;
 
-    const fakeReq = {} as express.Request;
-    const fakeRes = {
-      status: (statusCode) => ({
-        json: (data) => console.log(data),
-      }),
-    } as express.Response;
+//   await CreditoAmortizador(fakeReq, fakeRes);
 
-    await TareasProgramadasSinMora(fakeReq, fakeRes);
+//   console.log("Terminar credito de amortizacion");
+// });
 
-    console.log("Tarea de bolsas completada.");
-  } else {
-    console.log("Hoy es un día festivo. La tarea no se ejecutará.");
-  }
-});
+// // Calcular sanciones
+// cron.schedule(sanciones, async () => {
+//   console.log("Iniciando tarea de cálculo de sanciones...");
 
-// Tareas directas a las URL  recordar 30 dias en mora
-cron.schedule(Mora_30, async () => {
-  const hoy = new Date();
+//   const fakeReq = {} as express.Request; // Puedes personalizar esto según tus necesidades
+//   const fakeRes = {
+//     status: (statusCode) => ({ json: (data) => console.log(data) }),
+//   } as express.Response;
 
-  // Verificar si hoy es un día festivo en Colombia
-  if (!hd.isHoliday(hoy)) {
-    console.log("Iniciando tareas  recordar mora 30");
+//   await CalcularSanciones(fakeReq, fakeRes);
 
-    const fakeReq = {} as express.Request;
-    const fakeRes = {
-      status: (statusCode) => ({
-        json: (data) => console.log(data),
-      }),
-    } as express.Response;
+//   console.log("Tarea de cálculo de sanciones completada.");
+// });
 
-    await TareasProgramadasMoraPrimera(fakeReq, fakeRes);
+// // Nuevo saldo de bolsa
+// cron.schedule(bolsa, async () => {
+//   console.log("Iniciando bolsas.");
 
-    console.log("Tarea de bolsas completada.");
-  } else {
-    console.log("Hoy es un día festivo. La tarea no se ejecutará.");
-  }
-});
+//   const fakeReq = {} as express.Request; // Puedes personalizar esto según tus necesidades
+//   const fakeRes = {
+//     status: (statusCode) => ({ json: (data) => console.log(data) }),
+//   } as express.Response;
 
-// Tareas directas a las URL  recordar 60 dias en mora
-cron.schedule(Mora_60, async () => {
-  const hoy = new Date();
+//   await NuevoSaldoAnteriorBolsa(fakeReq, fakeRes);
 
-  // Verificar si hoy es un día festivo en Colombia
-  if (!hd.isHoliday(hoy)) {
-    console.log("Iniciando tareas  recordar mora 60");
+//   console.log("Tarea de bolsas");
+// });
 
-    const fakeReq = {} as express.Request;
-    const fakeRes = {
-      status: (statusCode) => ({
-        json: (data) => console.log(data),
-      }),
-    } as express.Response;
+// // // Enviar MSM
+// cron.schedule(MSM, async () => {
+//   console.log("Iniciando MSM.");
 
-    await TareasProgramadasMoraSegundo(fakeReq, fakeRes);
+//   const fakeReq = {} as express.Request; // Puedes personalizar esto según tus necesidades
+//   const fakeRes = {
+//     status: (statusCode) => ({ json: (data) => console.log(data) }),
+//   } as express.Response;
 
-    console.log("Tarea de bolsas completada.");
-  } else {
-    console.log("Hoy es un día festivo. La tarea no se ejecutará.");
-  }
-});
+//   await NotificarMensaje(fakeReq, fakeRes);
 
-// Tareas directas a las URL  recordar 90 dias en mora
-cron.schedule(Mora_90, async () => {
-  const hoy = new Date();
+//   console.log("Tarea de MSM");
+// });
 
-  // Verificar si hoy es un día festivo en Colombia
-  if (!hd.isHoliday(hoy)) {
-    console.log("Iniciando tareas  recordar mora 90");
+// // // Nuevo saldo de proveedor
+// cron.schedule(proveedor, async () => {
+//   console.log("Iniciando saldo proveedor.");
 
-    const fakeReq = {} as express.Request;
-    const fakeRes = {
-      status: (statusCode) => ({
-        json: (data) => console.log(data),
-      }),
-    } as express.Response;
+//   const fakeReq = {} as express.Request;
+//   const fakeRes = {
+//     status: (statusCode) => ({ json: (data) => console.log(data) }),
+//   } as express.Response;
 
-    await TareasProgramadasMoraTercero(fakeReq, fakeRes);
+//   await NuevoSaldoAnteriorproveedores(fakeReq, fakeRes);
 
-    console.log("Tarea de bolsas completada.");
-  } else {
-    console.log("Hoy es un día festivo. La tarea no se ejecutará.");
-  }
-});
+//   console.log("finalizado saldo proveedor");
+// });
 
-// Tareas directas a las URL  recordar 150 dias en mora
+// // // Nuevo saldo de listado de cobro
+// cron.schedule(Lista_cobranza, async () => {
+//   console.log("Iniciando lista de cobranza");
 
-cron.schedule(Mora_150, async () => {
-  const hoy = new Date();
+//   const fakeReq = {} as express.Request;
+//   const fakeRes = {
+//     status: (statusCode) => ({ json: (data) => console.log(data) }),
+//   } as express.Response;
 
-  // Verificar si hoy es un día festivo en Colombia
-  if (!hd.isHoliday(hoy)) {
-    console.log("Iniciando tareas  recordar mora 150");
+//   await ListaCobranza(fakeReq, fakeRes);
 
-    const fakeReq = {} as express.Request;
-    const fakeRes = {
-      status: (statusCode) => ({
-        json: (data) => console.log(data),
-      }),
-    } as express.Response;
+//   console.log("finalizado lista de cobranza");
+// });
 
-    await TareasProgramadasMoraCuatro(fakeReq, fakeRes);
+// // Nuevo saldo de listado de cobro  actualizar
+// cron.schedule(Lista_actualizar, async () => {
+//   console.log("Iniciando lista de cobranza  actualizar");
 
-    console.log("Tarea de bolsas completada.");
-  } else {
-    console.log("Hoy es un día festivo. La tarea no se ejecutará.");
-  }
-});
+//   const fakeReq = {} as express.Request;
+//   const fakeRes = {
+//     status: (statusCode) => ({ json: (data) => console.log(data) }),
+//   } as express.Response;
+
+//   await listadoCobranzaActualizar(fakeReq, fakeRes);
+
+//   console.log("finalizado lista de cobranza actualizar");
+// });
 
 
-// // Nuevo saldo de listado de cobro
-cron.schedule(Lista_cobranza2, async () => {
-  console.log("Iniciando lista de cobranza");
 
-  const fakeReq = {} as express.Request;
-  const fakeRes = {
-    status: (statusCode) => ({ json: (data) => console.log(data) }),
-  } as express.Response;
+// // Tareas directas a las URL  recordar 0 dias en mora
+// cron.schedule(Mora_0, async () => {
+//   const hoy = new Date();
 
-  await ListaCobranza(fakeReq, fakeRes);
+//   // Verificar si hoy es un día festivo en Colombia
+//   if (!hd.isHoliday(hoy)) {
+//     console.log("Iniciando tareas  recordar mora 0");
 
-  console.log("finalizado lista de cobranza");
-});
+//     const fakeReq = {} as express.Request;
+//     const fakeRes = {
+//       status: (statusCode) => ({
+//         json: (data) => console.log(data),
+//       }),
+//     } as express.Response;
 
-// Actualizar o sincronizar base de datos GOLDRA
-cron.schedule(mysql_GOLDRA, async () => {
-  console.log("sincronizar MYSQL GOLDRA");
+//     await TareasProgramadasSinMora(fakeReq, fakeRes);
 
-  const fakeReq = {} as express.Request;
-  const fakeRes = {
-    status: (statusCode) => ({ json: (data) => console.log(data) }),
-  } as express.Response;
+//     console.log("Tarea de bolsas completada.");
+//   } else {
+//     console.log("Hoy es un día festivo. La tarea no se ejecutará.");
+//   }
+// });
 
-  await sincronizarMysqlGOLDRA(fakeReq, fakeRes);
+// // Tareas directas a las URL  recordar 30 dias en mora
+// cron.schedule(Mora_30, async () => {
+//   const hoy = new Date();
 
-  console.log("finalizado sincronizar MYSQL GOLDRA");
-});
+//   // Verificar si hoy es un día festivo en Colombia
+//   if (!hd.isHoliday(hoy)) {
+//     console.log("Iniciando tareas  recordar mora 30");
 
-// Actualizar o sincronizar base de datos SOLUCREDITO
-cron.schedule(mysql_SOLUCREDITO, async () => {
-  console.log("sincronizar MYSQL FINOVA");
+//     const fakeReq = {} as express.Request;
+//     const fakeRes = {
+//       status: (statusCode) => ({
+//         json: (data) => console.log(data),
+//       }),
+//     } as express.Response;
 
-  const fakeReq = {} as express.Request;
-  const fakeRes = {
-    status: (statusCode) => ({ json: (data) => console.log(data) }),
-  } as express.Response;
+//     await TareasProgramadasMoraPrimera(fakeReq, fakeRes);
 
-  await sincronizarMysqlSOLUCREDITO(fakeReq, fakeRes);
+//     console.log("Tarea de bolsas completada.");
+//   } else {
+//     console.log("Hoy es un día festivo. La tarea no se ejecutará.");
+//   }
+// });
 
-  console.log("finalizado sincronizar MYSQL finova");
-});
+// // Tareas directas a las URL  recordar 60 dias en mora
+// cron.schedule(Mora_60, async () => {
+//   const hoy = new Date();
 
-// Actualizar listado de CIFIN
-cron.schedule(ListaCifin, async () => {
-  console.log("Lista de CIFIN");
+//   // Verificar si hoy es un día festivo en Colombia
+//   if (!hd.isHoliday(hoy)) {
+//     console.log("Iniciando tareas  recordar mora 60");
 
-  const fakeReq = {} as express.Request;
-  const fakeRes = {
-    status: (statusCode) => ({ json: (data) => console.log(data) }),
-  } as express.Response;
+//     const fakeReq = {} as express.Request;
+//     const fakeRes = {
+//       status: (statusCode) => ({
+//         json: (data) => console.log(data),
+//       }),
+//     } as express.Response;
 
-  await ListadoCifin(fakeReq, fakeRes);
+//     await TareasProgramadasMoraSegundo(fakeReq, fakeRes);
 
-  console.log("Lista finalizada CIFINs");
-});
+//     console.log("Tarea de bolsas completada.");
+//   } else {
+//     console.log("Hoy es un día festivo. La tarea no se ejecutará.");
+//   }
+// });
+
+// // Tareas directas a las URL  recordar 90 dias en mora
+// cron.schedule(Mora_90, async () => {
+//   const hoy = new Date();
+
+//   // Verificar si hoy es un día festivo en Colombia
+//   if (!hd.isHoliday(hoy)) {
+//     console.log("Iniciando tareas  recordar mora 90");
+
+//     const fakeReq = {} as express.Request;
+//     const fakeRes = {
+//       status: (statusCode) => ({
+//         json: (data) => console.log(data),
+//       }),
+//     } as express.Response;
+
+//     await TareasProgramadasMoraTercero(fakeReq, fakeRes);
+
+//     console.log("Tarea de bolsas completada.");
+//   } else {
+//     console.log("Hoy es un día festivo. La tarea no se ejecutará.");
+//   }
+// });
+
+// // Tareas directas a las URL  recordar 150 dias en mora
+
+// cron.schedule(Mora_150, async () => {
+//   const hoy = new Date();
+
+//   // Verificar si hoy es un día festivo en Colombia
+//   if (!hd.isHoliday(hoy)) {
+//     console.log("Iniciando tareas  recordar mora 150");
+
+//     const fakeReq = {} as express.Request;
+//     const fakeRes = {
+//       status: (statusCode) => ({
+//         json: (data) => console.log(data),
+//       }),
+//     } as express.Response;
+
+//     await TareasProgramadasMoraCuatro(fakeReq, fakeRes);
+
+//     console.log("Tarea de bolsas completada.");
+//   } else {
+//     console.log("Hoy es un día festivo. La tarea no se ejecutará.");
+//   }
+// });
 
 
-// Suspender cupo de credito si tiene mas de 90 dias en mora
-cron.schedule(suspenderCupo, async () => {
-  console.log("suspende cupo de credito mora > 90");
+// // // Nuevo saldo de listado de cobro
+// cron.schedule(Lista_cobranza2, async () => {
+//   console.log("Iniciando lista de cobranza");
 
-  const fakeReq = {} as express.Request;
-  const fakeRes = {
-    status: (statusCode) => ({ json: (data) => console.log(data) }),
-  } as express.Response;
+//   const fakeReq = {} as express.Request;
+//   const fakeRes = {
+//     status: (statusCode) => ({ json: (data) => console.log(data) }),
+//   } as express.Response;
 
-  await SuspenderCupo(fakeReq, fakeRes);
+//   await ListaCobranza(fakeReq, fakeRes);
 
-  console.log("finalizado suspende cupo de credito");
-});
+//   console.log("finalizado lista de cobranza");
+// });
+
+// // Actualizar o sincronizar base de datos GOLDRA
+// cron.schedule(mysql_GOLDRA, async () => {
+//   console.log("sincronizar MYSQL GOLDRA");
+
+//   const fakeReq = {} as express.Request;
+//   const fakeRes = {
+//     status: (statusCode) => ({ json: (data) => console.log(data) }),
+//   } as express.Response;
+
+//   await sincronizarMysqlGOLDRA(fakeReq, fakeRes);
+
+//   console.log("finalizado sincronizar MYSQL GOLDRA");
+// });
+
+// // Actualizar o sincronizar base de datos SOLUCREDITO
+// cron.schedule(mysql_SOLUCREDITO, async () => {
+//   console.log("sincronizar MYSQL FINOVA");
+
+//   const fakeReq = {} as express.Request;
+//   const fakeRes = {
+//     status: (statusCode) => ({ json: (data) => console.log(data) }),
+//   } as express.Response;
+
+//   await sincronizarMysqlSOLUCREDITO(fakeReq, fakeRes);
+
+//   console.log("finalizado sincronizar MYSQL finova");
+// });
+
+// // Actualizar listado de CIFIN
+// cron.schedule(ListaCifin, async () => {
+//   console.log("Lista de CIFIN");
+
+//   const fakeReq = {} as express.Request;
+//   const fakeRes = {
+//     status: (statusCode) => ({ json: (data) => console.log(data) }),
+//   } as express.Response;
+
+//   await ListadoCifin(fakeReq, fakeRes);
+
+//   console.log("Lista finalizada CIFINs");
+// });
 
 
-cron.schedule(temperatura_server, async () => {
-  console.log("Valdiar temperatura del servidor");
+// // Suspender cupo de credito si tiene mas de 90 dias en mora
+// cron.schedule(suspenderCupo, async () => {
+//   console.log("suspende cupo de credito mora > 90");
 
-  const fakeReq = {} as express.Request;
-  const fakeRes = {
-    status: (statusCode) => ({ json: (data) => console.log(data) }),
-  } as express.Response;
+//   const fakeReq = {} as express.Request;
+//   const fakeRes = {
+//     status: (statusCode) => ({ json: (data) => console.log(data) }),
+//   } as express.Response;
 
-  await Temperatura_server(fakeReq, fakeRes);
+//   await SuspenderCupo(fakeReq, fakeRes);
 
-  console.log("finalizado temperatura del servidor");
-});
+//   console.log("finalizado suspende cupo de credito");
+// });
+
+
+// cron.schedule(temperatura_server, async () => {
+//   console.log("Valdiar temperatura del servidor");
+
+//   const fakeReq = {} as express.Request;
+//   const fakeRes = {
+//     status: (statusCode) => ({ json: (data) => console.log(data) }),
+//   } as express.Response;
+
+//   await Temperatura_server(fakeReq, fakeRes);
+
+//   console.log("finalizado temperatura del servidor");
+// });
 
 
 app.listen(PORT, () => {

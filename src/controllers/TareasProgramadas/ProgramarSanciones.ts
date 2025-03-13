@@ -17,6 +17,205 @@ const apiURL_server = API_SERVER;
 
 const apiURL_panel = ADMIN_API;
 
+
+
+
+
+
+export const EliminarPesos = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  const tareas = "Eliminar pesos";
+  const tareaInsertada = await validarEInsertarTarea(tareas);
+  const { fecha, hora } = obtenerFechaHoraBogota();
+
+  if (!tareaInsertada) {
+    console.log("ya existe un registro en:", tareas, fecha, hora);
+    return; // Detener la ejecución si la tarea ya existe
+  }
+
+  try {
+    // Ejecutamos la consulta SELECT
+    const result = await pool.query(
+      `SELECT 
+        id,
+        prestamoID,
+        documento,
+        Numero_cuota,
+        capital,
+        interes,
+        aval,
+        sancion,
+        total_cuota,
+        saldo,
+        fecha_pago
+      FROM 
+        amortizacion
+      WHERE 
+        total_cuota = 1
+      ORDER BY 
+        total_cuota ASC;`
+    );
+
+    // result[0] contiene los datos de la consulta (las filas)
+    const rows = result[0]; // Aquí accedemos directamente a las filas
+
+    // Verificamos si rows es un array de RowDataPacket
+    if (Array.isArray(rows)) {
+      if (rows.length > 0) {
+        // Si hay resultados, iteramos sobre las filas
+        // console.log("Resultados de la consulta:", rows);
+
+        // Preparar y enviar la solicitud POST para cada resultado
+        for (const row of rows) {
+          // Verificamos que row sea del tipo adecuado (RowDataPacket)
+          if ('documento' in row) {
+            // Crear el cuerpo de la solicitud para cada documento
+            const cancelarBody = {
+              documento: row.documento,        // Usamos el campo 'documento' de la consulta
+              prestamo_ID: row.prestamoID,
+              valor_apagar: 1,                 // Valor para aplicar, como mencionaste
+            };
+
+            try {
+              // Enviar la solicitud POST
+              const cancelarResponse = await axios.post(
+                `${apiURL_panel}/api/credito/cancelar/modificado/finalizar`,
+                cancelarBody
+              );
+
+              // Si la solicitud es exitosa, loguear la respuesta
+              console.log(`Solicitud POST exitosa para documento: ${row.documento}`, cancelarResponse.data);
+            } catch (error) {
+              console.error(`Error al enviar la solicitud POST para el documento ${row.documento}:`, error);
+            }
+          } else {
+            console.error("El registro no contiene el campo 'documento'.");
+          }
+        }
+
+        // Respuesta final
+        res.status(200).json({
+          success: true,
+          message: 'Proceso de eliminar pesos completado',
+        });
+      } else {
+        // Si no hay resultados
+        console.log("No se encontraron registros con total_cuota = 1.");
+        res.status(404).json({ success: false, message: "No se encontraron registros para procesar." });
+      }
+    } else {
+      // Si no es un array de filas
+      console.error("El resultado no es un array de filas.");
+      res.status(500).json({ success: false, message: "Error en la consulta, no se recibieron filas." });
+    }
+  } catch (error) {
+    console.error("Error en la solicitud:", error);
+    res.status(500).json({ success: false, error: "Error en la solicitud" });
+  }
+};
+
+export const Desembolsos = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  const tareas = "insertar desembolsos";
+  const tareaInsertada = await validarEInsertarTarea(tareas);
+  const { fecha, hora } = obtenerFechaHoraBogota();
+
+  if (!tareaInsertada) {
+    console.log("ya existe un registro en:", tareas, fecha, hora);
+    return; // Detener la ejecución si la tarea ya existe
+  }
+
+  try {
+    // Ejecutar la consulta SQL para obtener los documentos en 'EN PROCESO' y el valor del préstamo
+    const [rows]: any[] = await pool.query(
+      `SELECT dc.prestamo_ID, dc.documento, dc.valor_prestamo
+      FROM detalle_credito dc
+      LEFT JOIN desembolso d ON dc.documento = d.documento AND dc.prestamo_ID = d.prestamoID
+      WHERE dc.estado = 'EN PROCESO'
+      AND d.documento IS NULL
+      LIMIT 0, 25;`
+    );
+
+    // Si no hay resultados de documentos, devolver mensaje
+    if (!rows || rows.length === 0) {
+      console.log("No hay registros de desembolso pendientes.");
+      res.status(200).json({
+        success: true,
+        message: "No hay registros de desembolso pendientes.",
+      });
+      return;
+    }
+
+    // Consultar la base de datos para obtener la información bancaria asociada al documento
+    const documentos = rows.map((row: any) => row.documento); // Extraer los documentos
+
+    const [infoBancarios]: any[] = await pool.query(
+      `SELECT documento, banco, tipoCuenta AS tipo, numeroCuenta 
+       FROM info_bancario
+       WHERE documento IN (?)`, [documentos]
+    );
+
+    // Imprimir los resultados en la consola para verlos
+    console.log("Resultados de la consulta a info_bancario:", infoBancarios);
+
+    // Si no se encontró información bancaria para los documentos, devolver respuesta
+    if (!infoBancarios || infoBancarios.length === 0) {
+      console.log("No se encontró información bancaria para los documentos.");
+    }
+
+    // Preparar los datos para la inserción en la tabla `desembolso`
+    const insertData = rows.map((row: any) => {
+      // Buscar la información bancaria correspondiente al documento
+      const infoBancario = infoBancarios.find((item: any) => item.documento === row.documento);
+
+      return {
+        documento: row.documento,
+        prestamoID: row.prestamo_ID,
+        banco: infoBancario ? infoBancario.banco : null,
+        valor: row.valor_prestamo,
+        cuenta: infoBancario ? infoBancario.numeroCuenta : null,
+        tipo: infoBancario ? infoBancario.tipo : null,
+        estado: 'EN PROCESO', // Estado por defecto
+      };
+    });
+
+    // Insertar los datos en la tabla `desembolso`
+    for (const data of insertData) {
+      await pool.query(
+        `INSERT INTO desembolso (documento, prestamoID, banco, valor, cuenta, tipo, estado) 
+        VALUES (?, ?, ?, ?, ?, ?, ?)`, 
+        [
+          data.documento,
+          data.prestamoID,
+          data.banco,
+          data.valor,
+          data.cuenta,
+          data.tipo,
+          data.estado,
+        ]
+      );
+    }
+
+    console.log("Datos insertados correctamente en la tabla desembolso.");
+
+    // Devolver la respuesta con los datos insertados
+    res.status(200).json({
+      success: true,
+      message: "Datos insertados correctamente en la tabla desembolso.",
+    });
+
+  } catch (error) {
+    console.error("Error en la solicitud:", error);
+    res.status(500).json({ success: false, error: "Error en la solicitud" });
+  }
+};
+
+
+
 // Proceso de actualización de pago en amortizador y historial
 export const CalcularSanciones = async (
   req: Request,
@@ -823,10 +1022,10 @@ export const ListaCobranza = async (
             return null;
           }
         } else {
-          console.log(
-            "No se encontró cuota con saldo para el préstamo ID:",
-            detalleCredito.prestamo_ID
-          );
+          // console.log(
+          //   "No se encontró cuota con saldo para el préstamo ID:",
+          //   detalleCredito.prestamo_ID
+          // );
           return null;
         }
       });
