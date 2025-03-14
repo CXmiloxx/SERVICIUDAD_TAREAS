@@ -30,10 +30,10 @@ export const EliminarPesos = async (
   const tareaInsertada = await validarEInsertarTarea(tareas);
   const { fecha, hora } = obtenerFechaHoraBogota();
 
-  if (!tareaInsertada) {
-    console.log("ya existe un registro en:", tareas, fecha, hora);
-    return; // Detener la ejecución si la tarea ya existe
-  }
+  // if (!tareaInsertada) {
+  //   console.log("ya existe un registro en:", tareas, fecha, hora);
+  //   return; // Detener la ejecución si la tarea ya existe
+  // }
 
   try {
     // Ejecutamos la consulta SELECT
@@ -124,10 +124,10 @@ export const Desembolsos = async (
   const tareaInsertada = await validarEInsertarTarea(tareas);
   const { fecha, hora } = obtenerFechaHoraBogota();
 
-  if (!tareaInsertada) {
-    console.log("ya existe un registro en:", tareas, fecha, hora);
-    return; // Detener la ejecución si la tarea ya existe
-  }
+  // if (!tareaInsertada) {
+  //   console.log("ya existe un registro en:", tareas, fecha, hora);
+  //   return; // Detener la ejecución si la tarea ya existe
+  // }
 
   try {
     // Ejecutar la consulta SQL para obtener los documentos en 'EN PROCESO' y el valor del préstamo
