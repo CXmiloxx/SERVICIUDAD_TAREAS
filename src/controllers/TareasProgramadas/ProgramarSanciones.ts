@@ -182,11 +182,14 @@ export const Desembolsos = async (
         estado: 'EN PROCESO', // Estado por defecto
       };
     });
+    const fechaHoraBogota = moment().tz("America/Bogota");
+
+    const fechaActual = fechaHoraBogota.format("YYYY-MM-DD HH:mm"); 
 
     // Insertar los datos en la tabla `desembolso`
     for (const data of insertData) {
       await pool.query(
-        `INSERT INTO desembolso (documento, prestamoID, banco, valor, cuenta, tipo, estado) 
+        `INSERT INTO desembolso (documento, prestamoID, banco, valor, cuenta, tipo, estado, fecha_registro) 
         VALUES (?, ?, ?, ?, ?, ?, ?)`, 
         [
           data.documento,
@@ -196,6 +199,7 @@ export const Desembolsos = async (
           data.cuenta,
           data.tipo,
           data.estado,
+          fechaActual,
         ]
       );
     }
