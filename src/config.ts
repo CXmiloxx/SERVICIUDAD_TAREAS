@@ -22,4 +22,10 @@ export const ADMIN_API =
   process.env.ADMIN_API || "https://panel.finova.com.cox";
 
 
+  export const API_CLUDFLARE_DNS =
+
+ process.env.API_CLUDFLARE_DNS || "https://panel.finova.com.cox";
+ 
+
+
   export const SERVIDOR = process.env.SERVIDOR || "SIN.ENV";

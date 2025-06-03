@@ -27,48 +27,34 @@ import {
   sincronizarMysqlSOLUCREDITO,
   SuspenderCupo,
   Temperatura_server,
+
   ListadoCifin,
   EliminarPesos,
   Desembolsos,
   MaximosIntentosCodigo,
 } from "./controllers/TareasProgramadas/ProgramarSanciones.js";
 
+import {
+
+  Actualizar_DNS,
+
+} from "./controllers/control_DNS.js";
+
+
+
 const app = express();
 
 app.use(
   cors({
-    origin: [
-
-        // red de TIGO
-  "http://201.236.243.161:3070",
-  "http://201.236.243.161:5173",
-
-  "http://192.168.1.150:3070",
-  "http://192.168.1.150:5173",
-
-  // red de CLARO
-  "http://186.87.165.129:3070",
-  "http://186.87.165.129:5173",
-
-  "http://192.168.0.150:3070",
-  "http://192.168.0.150:5173",
-
-      "http://localhost:5173",
-      "http://localhost:3070",
-      "https://pago.finova.com.co",
-      "https://app.goldraea.com",
-      "https://app.finova.com.co",
-      "https://demo.finova.com.co",
-      "https://server.finova.com.co",
-      "https://admin.finova.com.co",
-      "https://app.finova.com.co",
-      "https://tareas.finova.com.co",
-    "https://apps.solucredito.com.co",
-    ],
+    origin: (origin, callback) => {
+      // Permitir todos los orígenes o manejar lógica personalizada si deseas limitar ciertos orígenes
+      callback(null, true);
+    },
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
     credentials: true,
   })
 );
+
 
 app.use(express.json());
 
@@ -96,6 +82,8 @@ const mysql_GOLDRA = process.env.mysql_GOLDRA || '30,41 13 * * 1';
 const mysql_SOLUCREDITO = process.env.mysql_SOLUCREDITO || '30,41 13 * * 1';
 const suspenderCupo = process.env.suspenderCupo || '53 * * * *';
 const temperatura_server = process.env.temperatura_server || '* * * * *';
+const actualizar_DNS = process.env.actualizar_DNS || '* * * * *';
+
 const ListaCifin = process.env.ListaCifin || '15 * 1 * *';
 
 const EliminarPeso = process.env.EliminarPeso || '22 * * * *';
@@ -446,6 +434,23 @@ cron.schedule(temperatura_server, async () => {
   } as express.Response;
 
   await Temperatura_server(fakeReq, fakeRes);
+
+  console.log("finalizado temperatura del servidor");
+});
+
+
+// consulta para generar proceso de cobro 
+
+
+cron.schedule(actualizar_DNS, async () => {
+  console.log("Valdiar temperatura del servidor");
+
+  const fakeReq = {} as express.Request;
+  const fakeRes = {
+    status: (statusCode) => ({ json: (data) => console.log(data) }),
+  } as express.Response;
+
+  await Actualizar_DNS(fakeReq, fakeRes);
 
   console.log("finalizado temperatura del servidor");
 });
