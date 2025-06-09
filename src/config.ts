@@ -24,7 +24,7 @@ export const ADMIN_API =
 
   export const API_CLUDFLARE_DNS =
 
- process.env.API_CLUDFLARE_DNS || "https://panel.finova.com.cox";
+ process.env.API_CLUDFLARE_DNS || "xdxdxd";
  
 
 

@@ -75,12 +75,13 @@ export const Actualizar_DNS = async (
     "tareapanini.finova.com.co",
     "avvillas.finova.com.co",
     //goldraea.com
-    // "goldraea.com",
+    "goldraea.com",
     // "app.goldraea.com",
     // "licance.goldraea.com",
     // "pago.goldraea.com",
     // "server.goldraea.com",
     // "vps.goldraea.com",
+    // "pago.goldraea.com",
 
   
   ];
