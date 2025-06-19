@@ -46,6 +46,10 @@ export const Actualizar_DNS = async (
     "admin.autolin.com.co",
     "server.autolin.com.co",
     "autolin.com.co",
+    "whatsappapi.autolin.com.co",
+    "whatsappbot.autolin.com.co",
+    "pago.autolin.com.co",
+
     // //migracionhelp.com
     "migracionhelp.com",
     // //  rentacargomez.com
@@ -74,7 +78,7 @@ export const Actualizar_DNS = async (
     "pagopanini.finova.com.co",
     "tareapanini.finova.com.co",
     "avvillas.finova.com.co",
-    //goldraea.com
+    // goldraea.com
     "goldraea.com",
     // "app.goldraea.com",
     // "licance.goldraea.com",
