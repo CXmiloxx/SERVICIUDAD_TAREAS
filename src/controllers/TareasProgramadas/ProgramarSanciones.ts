@@ -188,20 +188,21 @@ export const Desembolsos = async (
 
     // Insertar los datos en la tabla `desembolso`
     for (const data of insertData) {
-      await pool.query(
-        `INSERT INTO desembolso (documento, prestamoID, banco, valor, cuenta, tipo, estado, fecha_registro) 
-        VALUES (?, ?, ?, ?, ?, ?, ?)`, 
-        [
-          data.documento,
-          data.prestamoID,
-          data.banco,
-          data.valor,
-          data.cuenta,
-          data.tipo,
-          data.estado,
-          fechaActual,
-        ]
-      );
+await pool.query(
+  `INSERT INTO desembolso (documento, prestamoID, banco, valor, cuenta, tipo, estado, fecha_registro) 
+  VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,  // <== aquí estaban solo 7, ahora son 8
+  [
+    data.documento,
+    data.prestamoID,
+    data.banco,
+    data.valor,
+    data.cuenta,
+    data.tipo,
+    data.estado,
+    fechaActual,
+  ]
+);
+
     }
 
     console.log("Datos insertados correctamente en la tabla desembolso.");
