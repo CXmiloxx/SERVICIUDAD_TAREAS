@@ -1219,7 +1219,7 @@ export const TareasProgramadasSinMora = async (
   const tareas = "tarea programada sin mora";
   const tareaInsertada = await validarEInsertarTarea(tareas);
   const { fecha, hora } = obtenerFechaHoraBogota();
-
+console.log("tarea programada sin mora", tareas, fecha, hora);
   if (!tareaInsertada) {
     console.log("ya existe un registro en:", tareas, fecha, hora);
     return; // Detener la ejecución si la tarea ya existe
@@ -1230,6 +1230,7 @@ export const TareasProgramadasSinMora = async (
     const recordarSinMora = await axios.post(
       `${apiURL_panel}/api/cartera/msms/recordatorio`
     );
+    console.log(recordarSinMora.data);
   } catch (error) {
     console.error("Error en la solicitud HTTP:", error);
     // Manejar el error y enviar una respuesta de error al cliente

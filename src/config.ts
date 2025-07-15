@@ -19,7 +19,7 @@ export const NOTIFICATION_API =
   process.env.NOTIFICATION_API || "https://notificar.finova.com.co";
 
 export const ADMIN_API =
-  process.env.ADMIN_API || "https://panel.finova.com.cox";
+  process.env.ADMIN_API || "https://panel.finova.com.co";
 
 
   export const API_CLUDFLARE_DNS =
