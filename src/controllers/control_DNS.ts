@@ -37,11 +37,11 @@ export const Actualizar_DNS = async (
     // const IP_PRINCIPAL = "201.236.243.161";
 
   const IP_PRINCIPAL = "190.128.2.56";
-  const IP_SECUNDARIA = "18.62.138.185";
+  const IP_SECUNDARIA = "181.62.138.185";
 
 
 
-  const DOMINIOS = [
+  const DOMINIOS = [ 
     // autolin.com.co --produccion
     "otro.autolin.com.co",
     "app.autolin.com.co",
