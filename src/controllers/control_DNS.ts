@@ -34,13 +34,15 @@ export const Actualizar_DNS = async (
   const util = await import("util");
   const ping = util.promisify(exec);
 
-  const IP_PRINCIPAL = "201.236.243.161";
-  const IP_SECUNDARIA = "181.62.138.185";
+    // const IP_PRINCIPAL = "201.236.243.161";
+
+  const IP_PRINCIPAL = "190.128.2.56";
+  const IP_SECUNDARIA = "18.62.138.185";
 
 
 
   const DOMINIOS = [
-    // autolin.com.co
+    // autolin.com.co --produccion
     "otro.autolin.com.co",
     "app.autolin.com.co",
     "admin.autolin.com.co",
@@ -49,12 +51,14 @@ export const Actualizar_DNS = async (
     "whatsappapi.autolin.com.co",
     "whatsappbot.autolin.com.co",
     "pago.autolin.com.co",
-
-    // //migracionhelp.com
+    "despacho.autolin.com.co",
+    "notificar.autolin.com.co",
+    //migracionhelp.com
     "migracionhelp.com",
     // //  rentacargomez.com
     "rentacargomez.com",
-    // finova.com.co
+
+    // finova.com.co produccion
     "finova.com.co",
     "gobernacion.finova.com.co",
     "apigober.finova.com.co",
@@ -78,6 +82,15 @@ export const Actualizar_DNS = async (
     "pagopanini.finova.com.co",
     "tareapanini.finova.com.co",
     "avvillas.finova.com.co",
+    "phpmyadmin.finova.com.co",
+    "desarrollo.finova.com.co",
+   
+    // finova demo
+    "demo.finova.com.co",
+    "proxmox.finova.com.co",
+    "demo-phpmyadmin.finova.com.co",
+
+
     // goldraea.com
     "goldraea.com",
     // "app.goldraea.com",
@@ -87,6 +100,14 @@ export const Actualizar_DNS = async (
     // "vps.goldraea.com",
     // "pago.goldraea.com",
 
+// ubiko prodccion
+       "ubiko.com.co",
+      "admin.ubiko.com.co",
+       "gps.ubiko.com.co",
+       "pagos.ubiko.com.co",
+       "panel.ubiko.com.co",
+       "traccar.ubiko.com.co",
+       
   
   ];
 
@@ -209,6 +230,10 @@ export const Actualizar_DNS = async (
   // Responder al cliente
   res.status(200).json({ mensaje: "Tarea ejecutada correctamente para todos los dominios." });
 };
+
+
+
+
 
 const obtenerFechaHoraBogota = (): { fecha: string; hora: string } => {
   // Obtener la fecha y hora actual en la zona horaria de Bogotá
