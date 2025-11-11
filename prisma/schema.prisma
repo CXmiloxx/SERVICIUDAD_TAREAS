@@ -1,0 +1,274 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum TipoDocumento {
+  CC
+  TI
+  CE
+  PASAPORTE
+}
+
+enum EstadoUsuario {
+  activo
+  inactivo
+}
+
+enum TipoContrato {
+  contratista
+  funcionario
+}
+
+enum TipoPretension {
+  determinada
+  indeterminada
+}
+
+enum Calidad {
+  demandado
+  demandante
+}
+
+enum Rol {
+  GOBERNACION
+  SECRETARIA
+  SUPERVISOR
+  FUNCIONARIO
+  CONTRATISTA
+}
+
+model Actuaciones {
+  id                Int       @id @default(autoincrement())
+  nroRadicado       String
+  fechaActuacion    DateTime
+  actuacion         String    @db.Text
+  anotacion         String    @db.Text
+  fechaInicio       DateTime?
+  fechaFinalizado   DateTime?
+  fechaNovedad      DateTime?
+  fechaRegistro     DateTime?
+  procesoJuducialId Int?
+
+  procesoJudicial ProcesoJudicial? @relation(fields: [procesoJuducialId], references: [id])
+}
+
+model Usuario {
+  id                Int              @id @default(autoincrement())
+  nombre            String
+  apellido          String
+  documento         String
+  tipoDocumento     TipoDocumento
+  correoElectronico String           @unique
+  telefono          String?
+  contrasena        String
+  estado            EstadoUsuario    @default(activo)
+  fechaRegistro     DateTime         @default(now())
+  secretariaId      Int?
+  rol               Rol?
+  secretaria        Secretaria?      @relation(fields: [secretariaId], references: [id])
+  contrato          Contrato?
+  usuarioProceso    UsuarioProceso[]
+  codigoUsuario     Int?
+  intentosCodigo    Int?
+}
+
+model Secretaria {
+  id       Int               @id @default(autoincrement())
+  nombre   String
+  usuarios Usuario[]
+  procesos ProcesoJudicial[]
+}
+
+model Contrato {
+  id           Int          @id @default(autoincrement())
+  tipoContrato TipoContrato @default(funcionario)
+  fechaInicio  DateTime?
+  fechaFin     DateTime?
+  usuarioId    Int          @unique
+
+  usuario Usuario @relation(fields: [usuarioId], references: [id])
+}
+
+model ProcesoJudicial {
+  id                       Int            @id @default(autoincrement())
+  radicado                 String
+  calidad                  Calidad
+  demandante               String
+  demandado                String
+  fechaNotificacion        DateTime?
+  jurisdiccionId           Int?
+  secretariaDespachoId     Int?
+  accionJudicialId         Int?
+  corporacionId            Int?
+  montoPretension          Float?
+  usuarioProcesoId         Int?
+  tipoPretension           TipoPretension
+  medidaCautelar           Boolean?       @default(false)
+  valorMedidaCautelar      Float?
+  estadoId                 Int?
+  numeroCedula             String?
+  despachoJudicial         String?
+  sintesis                 String?        @db.Text
+  dependenciaResponsableId Int?
+  hechoGeneradorId         Int?
+  fechaProbableFallo       DateTime?
+
+  // Campos de riesgo
+  fortalezaDefensaId    Int?
+  fortalezaProbatoriaId Int?
+  riesgoProcesalId      Int?
+  nivelJurisprudenciaId Int?
+
+  // Relaciones principales
+  jurisdiccion           Jurisdiccion?           @relation(fields: [jurisdiccionId], references: [id])
+  secretariaDespacho     Secretaria?             @relation(fields: [secretariaDespachoId], references: [id])
+  accionJudicial         AccionJudicial?         @relation(fields: [accionJudicialId], references: [id])
+  corporacion            Corporacion?            @relation(fields: [corporacionId], references: [id])
+  usuarioProceso         UsuarioProceso[]
+  estado                 Estado?                 @relation(fields: [estadoId], references: [id])
+  dependenciaResponsable DependenciaResponsable? @relation(fields: [dependenciaResponsableId], references: [id])
+  hechoGenerador         HechoGenerador?         @relation(fields: [hechoGeneradorId], references: [id])
+
+  // Relaciones con NivelRiesgo (todas consistentes)
+  fortalezaDefensaNivel    NivelRiesgo? @relation("FortalezaDefensaNivel", fields: [fortalezaDefensaId], references: [id])
+  fortalezaProbatoriaNivel NivelRiesgo? @relation("FortalezaProbatoriaNivel", fields: [fortalezaProbatoriaId], references: [id])
+  riesgoProcesalNivel      NivelRiesgo? @relation("RiesgoProcesalNivel", fields: [riesgoProcesalId], references: [id])
+  jurisprudenciaNivel      NivelRiesgo? @relation("JurisprudenciaNivel", fields: [nivelJurisprudenciaId], references: [id])
+
+  documentos       DocumentoProcesoJudicial[]
+  instancias       Instancia[]
+  SegundaInstancia SegundaInstancia[]
+  actuaciones      Actuaciones[]
+}
+
+model NivelRiesgo {
+  id     Int    @id @default(autoincrement())
+  nombre String
+
+  fortalezasDefensa     ProcesoJudicial[] @relation("FortalezaDefensaNivel")
+  fortalezasProbatorias ProcesoJudicial[] @relation("FortalezaProbatoriaNivel")
+  riesgosProcesales     ProcesoJudicial[] @relation("RiesgoProcesalNivel")
+  jurisprudencias       ProcesoJudicial[] @relation("JurisprudenciaNivel")
+}
+
+model UsuarioProceso {
+  id                Int      @id @default(autoincrement())
+  fechaVinculacion  DateTime
+  usuarioId         Int
+  procesoJudicialId Int
+
+  usuario         Usuario         @relation(fields: [usuarioId], references: [id])
+  procesoJudicial ProcesoJudicial @relation(fields: [procesoJudicialId], references: [id])
+}
+
+model Estado {
+  id               Int                @id @default(autoincrement())
+  nombre           String
+  procesos         ProcesoJudicial[]
+  instancias       Instancia[]
+  historialEstados HistorialEstado[]
+  SegundaInstancia SegundaInstancia[]
+  TerceraInstancia TerceraInstancia[]
+}
+
+model Instancia {
+  id                     Int      @id @default(autoincrement())
+  actualizacionInstancia DateTime
+  procesoJudicialId      Int
+  estadoId               Int
+
+  procesoJudicial  ProcesoJudicial    @relation(fields: [procesoJudicialId], references: [id])
+  estado           Estado             @relation(fields: [estadoId], references: [id])
+  SegundaInstancia SegundaInstancia[]
+}
+
+model SegundaInstancia {
+  id                Int    @id @default(autoincrement())
+  radicado          String
+  instanciaId       Int
+  estadoId          Int
+  procesoJudicialId Int
+
+  instancia        Instancia          @relation(fields: [instanciaId], references: [id])
+  estado           Estado             @relation(fields: [estadoId], references: [id])
+  procesoJudicial  ProcesoJudicial    @relation(fields: [procesoJudicialId], references: [id])
+  TerceraInstancia TerceraInstancia[]
+}
+
+model TerceraInstancia {
+  id                 Int @id @default(autoincrement())
+  estadoId           Int
+  segundaInstanciaId Int
+
+  estado           Estado           @relation(fields: [estadoId], references: [id])
+  segundaInstancia SegundaInstancia @relation(fields: [segundaInstanciaId], references: [id])
+}
+
+model Jurisdiccion {
+  id                 Int               @id @default(autoincrement())
+  nombre             String
+  fechaCreacion      DateTime          @default(now())
+  procesos           ProcesoJudicial[]
+  corporaciones      Corporacion[]
+  accionesJudiciales AccionJudicial[]
+}
+
+model Corporacion {
+  id             Int      @id @default(autoincrement())
+  nombre         String
+  fechaCreacion  DateTime
+  jurisdiccionId Int
+
+  jurisdiccion Jurisdiccion      @relation(fields: [jurisdiccionId], references: [id])
+  procesos     ProcesoJudicial[]
+}
+
+model DependenciaResponsable {
+  id       Int               @id @default(autoincrement())
+  nombre   String
+  procesos ProcesoJudicial[]
+}
+
+model HechoGenerador {
+  id       Int               @id @default(autoincrement())
+  nombre   String
+  procesos ProcesoJudicial[]
+}
+
+model AccionJudicial {
+  id             Int      @id @default(autoincrement())
+  nombre         String
+  fechaCreacion  DateTime @default(now())
+  jurisdiccionId Int
+
+  jurisdiccion Jurisdiccion      @relation(fields: [jurisdiccionId], references: [id])
+  procesos     ProcesoJudicial[]
+}
+
+model DocumentoProcesoJudicial {
+  id                Int      @id @default(autoincrement())
+  rutaRelativa      String
+  nombre            String
+  fechaCreacion     DateTime @default(now())
+  creador           String
+  procesoJudicialId Int
+
+  procesoJudicial ProcesoJudicial @relation(fields: [procesoJudicialId], references: [id])
+}
+
+model HistorialEstado {
+  id                 Int    @id @default(autoincrement())
+  estadoNuevo        String
+  estadoAnterior     String
+  estadoId           Int
+  instanciaId        Int?
+  segundaInstanciaId Int?
+  terceraInstanciaId Int?
+
+  estado Estado @relation(fields: [estadoId], references: [id])
+}
