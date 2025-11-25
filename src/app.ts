@@ -2,6 +2,7 @@ import express from 'express';
 import prismaService from './services/prisma.services.js';
 import { config } from './config/config.js';
 import './jobs/updateProcesses.job.js';
+import { log } from './utils/formatLog.js';
 
 const app = express();
 
@@ -16,24 +17,21 @@ const startServer = async () => {
         timeZone: 'America/Bogota',
       });
 
-      console.clear();
-      console.log('\n');
-      console.log('=======================================================');
-      console.log('              🚀 SERVIDOR INICIADO                    ');
-      console.log('=======================================================');
-      console.log(`  🌐 URL:           http://localhost:${config.port}/`);
-      console.log(`  🧩 Puerto:        ${config.port}`);
-      console.log(`  🕒 Fecha/Hora:    ${date}`);
-      console.log('-------------------------------------------------------');
-      console.log('  🧠 Sistema de tareas automáticas en ejecución...');
-      console.log('=======================================================\n');
+      log.separator('===');
+      log.success('🟢 Servidor iniciado');
+      log.separator('-');
+      log.info(`📦  Modo:        ${config.nodeEnv}`);
+      log.info(`🌐  Puerto:      ${config.port}`);
+      log.info(`🚀  URL:         http://localhost:${config.port}`);
+      log.info(`🕒 Fecha/Hora:    ${date}`);
+      log.info('🧠 Sistema de tareas automáticas en ejecución...');
+      log.separator('===');
+
     });
   } catch (error) {
-    console.error('=======================================================');
-    console.error('⛔ ERROR AL INICIAR SERVIDOR');
-    console.error('-------------------------------------------------------');
-    console.error('Motivo:', error.message || error);
-    console.error('=======================================================');
+    log.separator('===');
+    log.error('⛔ ERROR AL INICIAR SERVIDOR', error.message || error);
+    log.separator('===');
     process.exit(1);
   }
 };
