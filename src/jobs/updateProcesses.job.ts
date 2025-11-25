@@ -10,6 +10,16 @@ cron.schedule(config.actualizarProcesoCron, async () => {
     '🌙 Ejecutando tarea programada de actualización a medianoche...',
   );
   await service.ejecutarActualizacion();
-},{
-  timezome: 'America/Bogota'
+}, {
+  timeZone: 'America/Bogota'
+});
+
+
+cron.schedule(config.actualizarProcesoSegundaInstanciaCron, async () => {
+  console.log(
+    '🌙 Ejecutando tarea programada de actualización a medianoche...',
+  );
+  await service.ejecutarActualizacionSegundaInstancia();
+}, {
+  timeZone: 'America/Bogota'
 });
