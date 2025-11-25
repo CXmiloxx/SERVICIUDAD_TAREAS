@@ -11,9 +11,11 @@ const envSchema = z.object({
     .transform((val) => (val ? parseInt(val) : 3000)),
   DATABASE_URL: z.string().nonempty('La variable DATABASE_URL es requerida'),
   ACTUALIZAR_PROCESOS_CRON: z.string().optional(),
+  ACTUALIZAR_PROCESO_SEGUNDA_INSTANCIA_CRON: z.string().optional(),
   RAMA_JUDICIAL_URL: z
     .string()
     .nonempty('La variable RAMA_JUDICIAL_URL es requerida'),
+  NODE_ENV: z.string().optional(),
 });
 
 const parsedEnv = envSchema.safeParse(process.env);
@@ -31,4 +33,6 @@ export const config = {
   database: safeEnv.DATABASE_URL || '',
   ramaJudicialUrl: safeEnv.RAMA_JUDICIAL_URL || '',
   actualizarProcesoCron: safeEnv.ACTUALIZAR_PROCESOS_CRON || '0 0 * * *',
+  actualizarProcesoSegundaInstanciaCron: safeEnv.ACTUALIZAR_PROCESO_SEGUNDA_INSTANCIA_CRON || '0 0 * * *',
+  nodeEnv: safeEnv.NODE_ENV || 'production',
 };
