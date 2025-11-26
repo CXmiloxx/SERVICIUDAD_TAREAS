@@ -12,6 +12,10 @@ const envSchema = z.object({
   DATABASE_URL: z.string().nonempty('La variable DATABASE_URL es requerida'),
   ACTUALIZAR_PROCESOS_CRON: z.string().optional(),
   ACTUALIZAR_PROCESO_SEGUNDA_INSTANCIA_CRON: z.string().optional(),
+  NOTIFICAR_ACTUACIONES_PROCESO_JUDICIAL_CRON: z.string().optional(),
+  NOTIFICAR_ACTUACIONES_SEGUNDA_INSTANCIA_CRON: z.string().optional(),
+  NOTIFICAR_CONTRATO_EXPIRANDO_CRON: z.string().optional(),
+  NOTIFICAR_EVENTO_CALENDARIO_CRON: z.string().optional(),
   RAMA_JUDICIAL_URL: z
     .string()
     .nonempty('La variable RAMA_JUDICIAL_URL es requerida'),
@@ -34,5 +38,9 @@ export const config = {
   ramaJudicialUrl: safeEnv.RAMA_JUDICIAL_URL || '',
   actualizarProcesoCron: safeEnv.ACTUALIZAR_PROCESOS_CRON || '0 0 * * *',
   actualizarProcesoSegundaInstanciaCron: safeEnv.ACTUALIZAR_PROCESO_SEGUNDA_INSTANCIA_CRON || '0 0 * * *',
+  notificarActuacionesProcesoJudicialCron: safeEnv.NOTIFICAR_ACTUACIONES_PROCESO_JUDICIAL_CRON || '0 0 * * *',
+  notificarActuacionesSegundaInstanciaCron: safeEnv.NOTIFICAR_ACTUACIONES_SEGUNDA_INSTANCIA_CRON || '0 0 * * *',
+  notificarContratoExpirandoCron: safeEnv.NOTIFICAR_CONTRATO_EXPIRANDO_CRON || '0 0 * * *',
+  notificarEventoCalendarioCron: safeEnv.NOTIFICAR_EVENTO_CALENDARIO_CRON || '0 0 * * *',
   nodeEnv: safeEnv.NODE_ENV || 'production',
 };
