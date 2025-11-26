@@ -27,6 +27,7 @@
     "cors": "^2.8.5",
     "cron": "^3.1.7",
     "date-holidays": "^3.23.12",
+    "dayjs": "^1.11.19",
     "dotenv": "^16.3.1",
     "express": "^4.19.2",
     "http-proxy-middleware": "^2.0.6",
