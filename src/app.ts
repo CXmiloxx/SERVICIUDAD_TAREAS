@@ -2,6 +2,8 @@ import express from 'express';
 import prismaService from './services/prisma.services.js';
 import { config } from './config/config.js';
 import './jobs/updateProcesses.job.js';
+import './jobs/notifications.job.js';
+
 import { log } from './utils/formatLog.js';
 
 const app = express();
