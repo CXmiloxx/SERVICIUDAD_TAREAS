@@ -78,15 +78,11 @@ export class CronNotificationsService {
 
 
   async notificarEventosCalendario() {
-    const hoy = dayjs().startOf("day").toDate();
-    const manana = dayjs().add(1, "day").endOf("day").toDate();
+    const manana = dayjs().add(1, "day").startOf("day").toDate();
 
     const eventos = await this.prisma.eventosCalendario.findMany({
       where: {
-        fechaFin: {
-          gte: hoy,
-          lte: manana,
-        },
+        fechaEvento: manana
       },
       include: {
         usuario: true,
@@ -96,7 +92,7 @@ export class CronNotificationsService {
     let notificacionesCreadas = 0;
 
     for (const evento of eventos) {
-      const mensaje = eventoCalendarioMessage(evento.titulo, evento.fechaInicio);
+      const mensaje = eventoCalendarioMessage(evento.titulo, evento.fechaEvento);
       const existe = await this.notificationExists(
         evento.usuarioId,
         NotificacionTipo.EVENTO_CALENDARIO,
@@ -163,7 +159,7 @@ export class CronNotificationsService {
       radicadosProcesados.add(radicado);
       const notificaciones = await this.notificarNuevasActuacionesProcesoJudicial(
         radicado,
-        actuacion.fechaRegistro || new Date(),
+        actuacion.fechaActuacion || actuacion.fechaRegistro || new Date(),
       );
       totalNotificaciones += notificaciones;
     }
