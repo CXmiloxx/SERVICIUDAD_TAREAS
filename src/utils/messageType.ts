@@ -1,13 +1,13 @@
-import { NotificacionTipo, Usuario } from "@prisma/client";
+import { NotificacionTipo, Secretaria, Usuario } from "@prisma/client";
 import dayjs from "dayjs";
 
-export function contratoExpirandoMessage(usuario: Usuario, fechaFin: Date) {
+export function contratoExpirandoMessage(usuario: Usuario, fechaFin: Date, secretaria?: Secretaria) {
   const title = '¡Atención: Contrato por vencer!';
   const type = NotificacionTipo.CONTRATO_EXPIRANDO;
   const nombreCompleto = `${usuario.nombre} ${usuario.apellido}`;
   const fechaFormateada = dayjs(fechaFin).format("DD/MM/YYYY");
-  const message = `Te informamos que el contrato de ${nombreCompleto} está próximo a vencer el ${fechaFormateada}.`;
-  return { title, type, message };
+  const message = `Te informamos que el contrato de ${nombreCompleto} de la secretaria de ${secretaria.nombre} está próximo a vencer el ${fechaFormateada}.`;
+  return { title, type, message, secretaria };
 }
 
 export function eventoCalendarioMessage(titulo: string, fecha: Date) {
