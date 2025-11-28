@@ -23,7 +23,11 @@ export class CronNotificationsService {
         }
       },
       include: {
-        usuario: true,
+        usuario: {
+          include: {
+            secretaria:true,
+          }
+        }
       },
     });
   }
@@ -59,7 +63,7 @@ export class CronNotificationsService {
     let notificacionesCreadas = 0;
 
     for (const contract of contracts) {
-      const mensaje = contratoExpirandoMessage(contract.usuario, contract.fechaFin);
+      const mensaje = contratoExpirandoMessage(contract.usuario, contract.fechaFin, contract.usuario.secretaria);
       const existe = await this.notificationExists(contract.usuarioId, NotificacionTipo.CONTRATO_EXPIRANDO, mensaje.message);
 
       if (!existe) {

@@ -44,7 +44,7 @@ cron.schedule(config.notificarEventoCalendarioCron, async () => {
   timeZone: 'America/Bogota',
 });
 
-// Notificaciones de contratos próximos a vencer - Cada lunes a las 8:30 AM
+// Notificaciones de contratos próximos a vencer - Cada lunes a las 6:30 AM
 cron.schedule(config.notificarContratoExpirandoCron, async () => {
   log.info('📋 Ejecutando tarea programada de notificaciones de contratos próximos a vencer...');
   try {
