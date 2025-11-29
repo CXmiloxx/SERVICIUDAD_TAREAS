@@ -11,21 +11,22 @@ import {
 
 export class CronNotificationsService {
   private prisma = prismaService;
-  private targetDate = dayjs().add(7, "day").startOf("day").toDate();
-  private nextDay = dayjs(this.targetDate).endOf("day").toDate();
+  private readonly manana = dayjs().add(1, "day").startOf("day").toDate();
 
   private async contractsUsers() {
+    const hoy = dayjs().startOf("day");
+    const en7dias = hoy.add(7, "day").endOf("day");
     return this.prisma.contrato.findMany({
       where: {
         fechaFin: {
-          gte: this.targetDate,
-          lte: this.nextDay,
+          gte: en7dias.startOf("day").toDate(),
+          lte: en7dias.endOf("day").toDate(),
         }
       },
       include: {
         usuario: {
           include: {
-            secretaria:true,
+            secretaria: true,
           }
         }
       },
@@ -82,11 +83,10 @@ export class CronNotificationsService {
 
 
   async notificarEventosCalendario() {
-    const manana = dayjs().add(1, "day").startOf("day").toDate();
 
     const eventos = await this.prisma.eventosCalendario.findMany({
       where: {
-        fechaEvento: manana
+        fechaEvento: this.manana
       },
       include: {
         usuario: true,
