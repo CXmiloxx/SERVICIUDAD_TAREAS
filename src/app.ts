@@ -12,8 +12,6 @@ app.use(express.json());
 
 const startServer = async () => {
   try {
-    await prismaService.connectDB();
-
     app.listen(config.port, () => {
       const date = new Date().toLocaleString('es-CO', {
         timeZone: 'America/Bogota',
