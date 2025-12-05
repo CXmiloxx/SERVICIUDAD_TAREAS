@@ -1,32 +1,50 @@
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import { config } from '../config/config';
-import { retry } from '../utils/retry';
+import { rateLimitingConfig } from '../config/rateLimiting.config';
+import { retryWithBackoff } from '../utils/retry';
 
 const BASE_URL =
   config.ramaJudicialUrl ||
   'https://consultaprocesos.ramajudicial.gov.co:448/api/v2';
 
 export class JudicialBranchServices {
-  
+
   /** Obtiene el idProceso usando el numero de radicado */
   async obtenerIdProceso(nroRadicado: string): Promise<string> {
-    return retry(async () => {
+    return retryWithBackoff(async () => {
       const url = `${BASE_URL}/Procesos/Consulta/NumeroRadicacion?numero=${nroRadicado}&SoloActivos=false&pagina=1`;
-      const { data } = await axios.get(url, { timeout: 10000 });
+      const { data } = await axios.get(url, {
+        timeout: rateLimitingConfig.requestTimeout,
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+          'Accept': 'application/json'
+        }
+      });
 
       if (!data?.procesos?.length) {
         throw new Error(`No se encontró el proceso para ${nroRadicado}`);
       }
 
       return data.procesos[0].idProceso;
+    }, {
+      retries: rateLimitingConfig.retry.attempts,
+      initialDelay: rateLimitingConfig.retry.initialDelay,
+      maxDelay: rateLimitingConfig.retry.maxDelay,
+      exponentialBackoff: rateLimitingConfig.retry.exponentialBackoff
     });
   }
 
   /** Obtiene todas las actuaciones de un proceso */
   async obtenerActuaciones(idProceso: string): Promise<any[]> {
-    try {
+    return retryWithBackoff(async () => {
       const urlPrimera = `${BASE_URL}/Proceso/Actuaciones/${idProceso}?pagina=1`;
-      const { data } = await axios.get(urlPrimera, { timeout: 1000 });
+      const { data } = await axios.get(urlPrimera, {
+        timeout: rateLimitingConfig.requestTimeout,
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+          'Accept': 'application/json'
+        }
+      });
 
       if (!data?.actuaciones) return [];
 
@@ -38,10 +56,18 @@ export class JudicialBranchServices {
       // Si hay más páginas, recorrerlas
       if (totalPaginas > 1) {
         for (let pagina = 2; pagina <= totalPaginas; pagina++) {
+          await new Promise(resolve => setTimeout(resolve, rateLimitingConfig.delayBetweenPages));
+
           const { data: extra } = await axios.get(
             `${BASE_URL}/Proceso/Actuaciones/${idProceso}?pagina=${pagina}`,
+            {
+              timeout: rateLimitingConfig.requestTimeout,
+              headers: {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+                'Accept': 'application/json'
+              }
+            }
           );
-
 
           if (Array.isArray(extra?.actuaciones)) {
             actuaciones = actuaciones.concat(extra.actuaciones);
@@ -50,8 +76,11 @@ export class JudicialBranchServices {
       }
 
       return actuaciones;
-    } catch (error: any) {
-      throw new Error(error.message || 'Error al obtener las actuaciones');
-    }
+    }, {
+      retries: rateLimitingConfig.retry.attempts,
+      initialDelay: rateLimitingConfig.retry.initialDelay,
+      maxDelay: rateLimitingConfig.retry.maxDelay,
+      exponentialBackoff: rateLimitingConfig.retry.exponentialBackoff
+    });
   }
 }
