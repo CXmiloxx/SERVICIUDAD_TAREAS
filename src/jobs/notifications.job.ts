@@ -15,7 +15,7 @@ cron.schedule(config.notificarActuacionesProcesoJudicialCron, async () => {
     log.error('❌ Error en notificaciones de primera instancia:', error);
   }
 }, {
-  timeZone: 'America/Bogota',
+  timezone: 'America/Bogota',
 });
 
 // Notificaciones de nuevas actuaciones de segunda instancia - Cada día a las 2:45 AM (después de la actualización)
@@ -28,7 +28,7 @@ cron.schedule(config.notificarActuacionesSegundaInstanciaCron, async () => {
     log.error('❌ Error en notificaciones de segunda instancia:', error);
   }
 }, {
-  timeZone: 'America/Bogota',
+  timezone: 'America/Bogota',
 });
 
 // Notificaciones de eventos del calendario - Cada día a las 7:00 AM
@@ -41,7 +41,7 @@ cron.schedule(config.notificarEventoCalendarioCron, async () => {
     log.error('❌ Error en notificaciones de eventos del calendario:', error);
   }
 }, {
-  timeZone: 'America/Bogota',
+  timezone: 'America/Bogota',
 });
 
 // Notificaciones de contratos próximos a vencer - Cada lunes a las 6:30 AM
@@ -54,7 +54,7 @@ cron.schedule(config.notificarContratoExpirandoCron, async () => {
     log.error('❌ Error en notificaciones de contratos:', error);
   }
 }, {
-  timeZone: 'America/Bogota',
+  timezone: 'America/Bogota',
 });
 
 log.info('🚀 Tareas programadas de notificaciones iniciadas correctamente.');

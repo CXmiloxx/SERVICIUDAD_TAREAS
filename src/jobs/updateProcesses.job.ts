@@ -20,7 +20,7 @@ cron.schedule(config.actualizarProcesoCron, async () => {
     log.error('❌ Error en actualización de primera instancia:', error);
   }
 }, {
-  timeZone: 'America/Bogota',
+  timezone: 'America/Bogota',
 });
 
 // Actualización de actuaciones de segunda instancia - Cada noche a las 1:00 AM
@@ -38,7 +38,7 @@ cron.schedule(config.actualizarProcesoSegundaInstanciaCron, async () => {
     log.error('❌ Error en actualización de segunda instancia:', error);
   }
 }, {
-  timeZone: 'America/Bogota',
+  timezone: 'America/Bogota',
 });
 
 log.info('🚀 Tareas programadas de actualización iniciadas correctamente.');
