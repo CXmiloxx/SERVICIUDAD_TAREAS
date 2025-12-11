@@ -17,3 +17,5 @@ cron.schedule(config.inactivarUsuariosCron, async () => {
 }, {
   timezone: 'America/Bogota',
 });
+
+log.info('🚀 Tareas programadas de inactivación de usuarios iniciadas correctamente.');
