@@ -16,6 +16,7 @@ const envSchema = z.object({
   NOTIFICAR_ACTUACIONES_SEGUNDA_INSTANCIA_CRON: z.string().optional(),
   NOTIFICAR_CONTRATO_EXPIRANDO_CRON: z.string().optional(),
   NOTIFICAR_EVENTO_CALENDARIO_CRON: z.string().optional(),
+  INACTIVAR_USUARIOS_CRON: z.string().optional(),
   RAMA_JUDICIAL_URL: z
     .string()
     .nonempty('La variable RAMA_JUDICIAL_URL es requerida'),
@@ -43,4 +44,5 @@ export const config = {
   notificarContratoExpirandoCron: safeEnv.NOTIFICAR_CONTRATO_EXPIRANDO_CRON || '0 0 * * *',
   notificarEventoCalendarioCron: safeEnv.NOTIFICAR_EVENTO_CALENDARIO_CRON || '0 0 * * *',
   nodeEnv: safeEnv.NODE_ENV || 'production',
+  inactivarUsuariosCron: safeEnv.INACTIVAR_USUARIOS_CRON || '0 0 * * *',
 };
