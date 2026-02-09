@@ -38,6 +38,7 @@ enum TipoPretension {
 enum Calidad {
   DEMANDADO
   DEMANDANTE
+  VINCULADO
 }
 
 enum Rol {
@@ -107,6 +108,7 @@ model Usuario {
   eventosCalendario                 EventosCalendario[]
   revisionesLegalesSegundaInstancia RevisionLegalSegundaInstancia[] @relation("RevisionLegalSegundaInstanciaCreador")
   notificaciones                    Notificaciones[]
+  auditoriaLogs                     AuditoriaLog[]
 }
 
 model Secretaria {
@@ -132,6 +134,7 @@ model ProcesoJudicial {
   calidad                  Calidad
   demandante               String
   demandado                String
+  fechaAdmisionDemanda     DateTime?
   fechaNotificacion        DateTime?
   jurisdiccionId           Int?
   secretariaDespachoId     Int?
@@ -140,6 +143,7 @@ model ProcesoJudicial {
   montoPretension          Float?
   usuarioProcesoId         Int?
   tipoPretension           TipoPretension
+  autoridadAccionJudicial String? @db.Text
   medidaCautelar           String?
   valorMedidaCautelar      Float?
   montoTotalProceso        Float?
@@ -153,6 +157,8 @@ model ProcesoJudicial {
   etapaProceso             String?
   falloPrimeraInstancia    String?
   fechaFallo               DateTime?
+  fechaApelacion           DateTime?
+  fechaNotificacionFallo   DateTime?
   apelacion                String?
   apelacionContraparte     String?
 
@@ -161,6 +167,7 @@ model ProcesoJudicial {
   fortalezaProbatoriaId Int?
   riesgoProcesalId      Int?
   nivelJurisprudenciaId Int?
+  nombreEntidadesVinculadas String?
 
   // Relaciones principales
   jurisdiccion           Jurisdiccion?           @relation(fields: [jurisdiccionId], references: [id])
@@ -211,7 +218,8 @@ model SegundaInstancia {
   corporacionSegundaInstanciaId Int
   despacho                      String
   etapaProceso                  String
-  fechaFallo                    DateTime
+  fechaFallo                    DateTime?
+  fechaNotificacionFallo        DateTime?
   fallo                         String?
   terminoFallo                  String
   tipoTerminoFallo              String?
@@ -226,11 +234,13 @@ model SegundaInstancia {
   procesoJudicialId                             Int
   cumplimiento                                  String
   estadoFinalProceso                            String
+  idRecursoEconomico                            Int?
 
   // Relaciones
   jurisdiccion    Jurisdiccion                @relation(fields: [jurisdiccionId], references: [id])
   corporacion     CorporacionSegundaInstancia @relation(fields: [corporacionSegundaInstanciaId], references: [id])
   procesoJudicial ProcesoJudicial             @relation(fields: [procesoJudicialId], references: [id])
+  recursoEconomico         RecursoEconomico? @relation(fields: [idRecursoEconomico], references: [id])
 
   documentos                     DocumentosSegundaInstancia[]
   comentarios                    ComentariosSegundaInstancia[]
@@ -405,4 +415,33 @@ model Notificaciones {
   read      Boolean          @default(false)
   createdAt DateTime         @default(now())
   usuario   Usuario          @relation(fields: [usuarioId], references: [id])
+}
+
+model RecursoEconomico {
+  id               Int                @id @default(autoincrement())
+  nombre           String
+  fechaCreacion    DateTime           @default(now())
+  segundasInstancias SegundaInstancia[]
+}
+
+enum AccionAuditoria {
+  INSERT
+  UPDATE
+  DELETE
+}
+
+model AuditoriaLog {
+  id                Int              @id @default(autoincrement())
+  tablaAfectada     String           @db.VarChar(100)
+  registroId        Int
+  accion            AccionAuditoria
+  datosAnteriores   Json?
+  datosNuevos       Json?
+  usuarioId         Int?
+  fechaAuditoria    DateTime         @default(now())
+  usuario           Usuario?         @relation(fields: [usuarioId], references: [id])
+
+  @@index([tablaAfectada, registroId])
+  @@index([fechaAuditoria])
+  @@index([usuarioId])
 }
