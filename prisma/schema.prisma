@@ -109,6 +109,7 @@ model Usuario {
   revisionesLegalesSegundaInstancia RevisionLegalSegundaInstancia[] @relation("RevisionLegalSegundaInstanciaCreador")
   notificaciones                    Notificaciones[]
   auditoriaLogs                     AuditoriaLog[]
+  comentarios                       Comentarios[]
 }
 
 model Secretaria {
@@ -143,7 +144,7 @@ model ProcesoJudicial {
   montoPretension          Float?
   usuarioProcesoId         Int?
   tipoPretension           TipoPretension
-  autoridadAccionJudicial String? @db.Text
+  autoridadAccionJudicial  String?        @db.Text
   medidaCautelar           String?
   valorMedidaCautelar      Float?
   montoTotalProceso        Float?
@@ -163,10 +164,10 @@ model ProcesoJudicial {
   apelacionContraparte     String?
 
   // Campos de riesgo
-  fortalezaDefensaId    Int?
-  fortalezaProbatoriaId Int?
-  riesgoProcesalId      Int?
-  nivelJurisprudenciaId Int?
+  fortalezaDefensaId        Int?
+  fortalezaProbatoriaId     Int?
+  riesgoProcesalId          Int?
+  nivelJurisprudenciaId     Int?
   nombreEntidadesVinculadas String?
 
   // Relaciones principales
@@ -212,7 +213,7 @@ model UsuarioProceso {
 }
 
 model SegundaInstancia {
-  id                            Int      @id @default(autoincrement())
+  id                            Int       @id @default(autoincrement())
   radicado                      String
   jurisdiccionId                Int
   corporacionSegundaInstanciaId Int
@@ -224,7 +225,7 @@ model SegundaInstancia {
   terminoFallo                  String
   tipoTerminoFallo              String?
   tiempoFallo                   Int?
-  transcripcionOrdenJudicial    String?  @db.Text
+  transcripcionOrdenJudicial    String?   @db.Text
   costas                        String
   valorCostas                   Int?
 
@@ -237,10 +238,10 @@ model SegundaInstancia {
   idRecursoEconomico                            Int?
 
   // Relaciones
-  jurisdiccion    Jurisdiccion                @relation(fields: [jurisdiccionId], references: [id])
-  corporacion     CorporacionSegundaInstancia @relation(fields: [corporacionSegundaInstanciaId], references: [id])
-  procesoJudicial ProcesoJudicial             @relation(fields: [procesoJudicialId], references: [id])
-  recursoEconomico         RecursoEconomico? @relation(fields: [idRecursoEconomico], references: [id])
+  jurisdiccion     Jurisdiccion                @relation(fields: [jurisdiccionId], references: [id])
+  corporacion      CorporacionSegundaInstancia @relation(fields: [corporacionSegundaInstanciaId], references: [id])
+  procesoJudicial  ProcesoJudicial             @relation(fields: [procesoJudicialId], references: [id])
+  recursoEconomico RecursoEconomico?           @relation(fields: [idRecursoEconomico], references: [id])
 
   documentos                     DocumentosSegundaInstancia[]
   comentarios                    ComentariosSegundaInstancia[]
@@ -287,7 +288,9 @@ model Comentarios {
   comentario        String          @db.Text
   creadoEn          DateTime        @default(now())
   actualizadoEn     DateTime        @updatedAt
+  creadoPorId       Int?
   procesoJudicial   ProcesoJudicial @relation(fields: [procesoJudicialId], references: [id])
+  creadoPor         Usuario?        @relation(fields: [creadoPorId], references: [id])
 }
 
 model RevisionLegal {
@@ -397,13 +400,31 @@ model DocumentoProcesoJudicial {
   procesoJudicial ProcesoJudicial @relation(fields: [procesoJudicialId], references: [id])
 }
 
+enum TipoEventoCalendario {
+  AUDIENCIA
+  VENCIMIENTO_CONTESTACION
+  VENCIMIENTO_RECURSO
+  OTRO
+}
+
 model EventosCalendario {
-  id          Int      @id @default(autoincrement())
-  titulo      String
-  descripcion String   @db.Text
-  fechaEvento DateTime @default(now())
-  usuarioId   Int
-  usuario     Usuario  @relation(fields: [usuarioId], references: [id])
+  id Int @id @default(autoincrement())
+  tipo TipoEventoCalendario?
+
+  fecha    DateTime?
+  hora     String?
+  juzgado  String?
+  radicado String?
+  usuarioId Int
+
+  descripcion String? @db.Text
+  fechaEvento DateTime?
+  link   String?
+  correo String?
+
+  createdAt DateTime @default(now())
+
+  usuario   Usuario @relation(fields: [usuarioId], references: [id])
 }
 
 model Notificaciones {
@@ -418,9 +439,9 @@ model Notificaciones {
 }
 
 model RecursoEconomico {
-  id               Int                @id @default(autoincrement())
-  nombre           String
-  fechaCreacion    DateTime           @default(now())
+  id                 Int                @id @default(autoincrement())
+  nombre             String
+  fechaCreacion      DateTime           @default(now())
   segundasInstancias SegundaInstancia[]
 }
 
@@ -431,15 +452,15 @@ enum AccionAuditoria {
 }
 
 model AuditoriaLog {
-  id                Int              @id @default(autoincrement())
-  tablaAfectada     String           @db.VarChar(100)
-  registroId        Int
-  accion            AccionAuditoria
-  datosAnteriores   Json?
-  datosNuevos       Json?
-  usuarioId         Int?
-  fechaAuditoria    DateTime         @default(now())
-  usuario           Usuario?         @relation(fields: [usuarioId], references: [id])
+  id              Int             @id @default(autoincrement())
+  tablaAfectada   String          @db.VarChar(100)
+  registroId      Int
+  accion          AccionAuditoria
+  datosAnteriores Json?
+  datosNuevos     Json?
+  usuarioId       Int?
+  fechaAuditoria  DateTime        @default(now())
+  usuario         Usuario?        @relation(fields: [usuarioId], references: [id])
 
   @@index([tablaAfectada, registroId])
   @@index([fechaAuditoria])

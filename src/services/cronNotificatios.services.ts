@@ -96,7 +96,7 @@ export class CronNotificationsService {
     let notificacionesCreadas = 0;
 
     for (const evento of eventos) {
-      const mensaje = eventoCalendarioMessage(evento.titulo, evento.fechaEvento);
+      const mensaje = eventoCalendarioMessage(evento.tipo, evento.fechaEvento);
       const existe = await this.notificationExists(
         evento.usuarioId,
         NotificacionTipo.EVENTO_CALENDARIO,
